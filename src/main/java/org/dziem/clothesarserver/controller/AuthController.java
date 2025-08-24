@@ -1,4 +1,4 @@
-package org.dziem.clothesarserver;
+package org.dziem.clothesarserver.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
