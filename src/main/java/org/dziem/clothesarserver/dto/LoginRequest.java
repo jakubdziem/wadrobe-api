@@ -8,7 +8,7 @@ import lombok.Data;
 @Data
 public class LoginRequest {
     @NotNull
-    private String username;
+    private String email;
     @NotNull
     @Size(min = 8)
     @Pattern(regexp = "^(?=.*[0-9])(?=.*[^a-zA-Z0-9]).{8,}$")

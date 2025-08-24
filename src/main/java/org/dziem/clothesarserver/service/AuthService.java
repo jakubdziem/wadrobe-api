@@ -19,9 +19,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
 
     public boolean register(RegisterRequest request) {
-        if (userRepository.findByUsernameOrEmail(request.getUsername(), request.getEmail()).isPresent()) return false;
+        if (userRepository.findByEmail(request.getEmail()).isPresent()) return false;
         User user = new User();
-        user.setUsername(request.getUsername());
         user.setEmail(request.getEmail());
         user.setPassword(passwordEncoder.encode(request.getPassword()));
         userRepository.save(user);
@@ -29,14 +28,14 @@ public class AuthService {
     }
 
     public AuthResponse login(LoginRequest request) {
-        User user = userRepository.findByUsername(request.getUsername())
+        User user = userRepository.findByEmail(request.getEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
         }
 
-        String accessToken = jwtProvider.generateToken(user.getUsername());
+        String accessToken = jwtProvider.generateToken(user.getEmail());
 
         return new AuthResponse(user.getUserId(), accessToken);
     }
