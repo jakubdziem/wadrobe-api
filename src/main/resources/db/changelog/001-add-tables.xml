@@ -8,6 +8,18 @@
 
     <changeSet id="001-add-some-table" author="jakub">
 
+        <createTable tableName="users">
+            <column name="user_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="email" type="varchar(255)">
+                <constraints unique="true" nullable="false"/>
+            </column>
+            <column name="password" type="varchar(255)">
+                <constraints nullable="false"/>
+            </column>
+        </createTable>
+
         <createTable tableName="condition">
             <column name="condition_id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
