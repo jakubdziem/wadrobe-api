@@ -1,0 +1,59 @@
+package org.dziem.clothesarserver.model;
+
+import jakarta.persistence.*;
+import lombok.*;
+
+import java.util.ArrayList;
+import java.util.Date;
+import java.util.List;
+import java.util.UUID;
+
+@Entity
+@Table(name = "piece_of_clothing")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@Builder
+public class PieceOfClothing {
+    @Id
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    @Column(name = "piece_of_clothing_id", nullable = false)
+    private UUID id;
+
+    private String name;
+    private String brand;
+    private Double price;
+    private String imageUrl;
+    private String arUrl;
+    private String note;
+
+    private Date purchaseDate;
+    private Date lastWornDate;
+
+    private Short wearCount = 0;
+    private Boolean isFavorite = false;
+
+    @ManyToOne
+    @JoinColumn(name = "user_id", nullable = false)
+    private User user;
+
+    @ManyToOne @JoinColumn(name = "condition_id")
+    private Condition condition;
+
+    @ManyToOne @JoinColumn(name = "size_id")
+    private Size size;
+
+    @ManyToOne @JoinColumn(name = "category_id")
+    private Category category;
+
+    @ManyToOne @JoinColumn(name = "tag_id")
+    private Tag tag;
+
+    @OneToMany(mappedBy = "pieceOfClothing", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<WornDate> wornDates = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "pieces")
+    private List<Occasion> occasions = new ArrayList<>();
+}
+
