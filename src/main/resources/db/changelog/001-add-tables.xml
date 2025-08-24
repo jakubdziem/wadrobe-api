@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
+
+    <changeSet id="001-add-some-table" author="jakub">
+
+        <createTable tableName="condition">
+            <column name="condition_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="size">
+            <column name="size_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="category">
+            <column name="category_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="tag">
+            <column name="tag_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(50)"/>
+        </createTable>
+
+        <createTable tableName="occasion">
+            <column name="occasion_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(200)"/>
+            <column name="date" type="datetime"/>
+        </createTable>
+
+        <createTable tableName="user_stats">
+            <column name="user_stats_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="wardrobe_price" type="decimal(15,2)">
+                <constraints nullable="false"/>
+            </column>
+            <column name="outfits_count" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="clothes_count" type="smallint">
+                <constraints nullable="false"/>
+            </column>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_user_stats_user" references="users(user_id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="piece_of_clothing">
+            <column name="piece_of_clothing_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="name" type="varchar(200)"/>
+            <column name="brand" type="varchar(100)"/>
+            <column name="price" type="decimal(10,2)"/>
+            <column name="image_url" type="varchar(500)"/>
+            <column name="note" type="varchar(300)"/>
+            <column name="purchase_date" type="date"/>
+            <column name="last_worn_date" type="datetime"/>
+            <column name="wear_count" type="smallint" defaultValueNumeric="0"/>
+            <column name="is_favorite" type="tinyint" defaultValueNumeric="0"/>
+            <column name="user_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_piece_user" references="users(user_id)"/>
+            </column>
+            <column name="condition_id" type="UUID">
+                <constraints nullable="true" foreignKeyName="fk_piece_condition" references="condition(condition_id)"/>
+            </column>
+            <column name="size_id" type="UUID">
+                <constraints nullable="true" foreignKeyName="fk_piece_size" references="size(size_id)"/>
+            </column>
+            <column name="category_id" type="UUID">
+                <constraints nullable="true" foreignKeyName="fk_piece_category" references="category(category_id)"/>
+            </column>
+            <column name="tag_id" type="UUID">
+                <constraints nullable="true" foreignKeyName="fk_piece_tag" references="tag(tag_id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="worn_date">
+            <column name="worn_date_id" type="UUID">
+                <constraints primaryKey="true" nullable="false"/>
+            </column>
+            <column name="date" type="datetime">
+                <constraints nullable="false"/>
+            </column>
+            <column name="piece_of_clothing_id" type="UUID">
+                <constraints nullable="false" foreignKeyName="fk_worn_piece" references="piece_of_clothing(piece_of_clothing_id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="occasion_has_piece_of_clothing">
+            <column name="occasion_id" type="UUID">
+                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_ohpc_occasion" references="occasion(occasion_id)"/>
+            </column>
+            <column name="piece_of_clothing_id" type="UUID">
+                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_ohpc_piece" references="piece_of_clothing(piece_of_clothing_id)"/>
+            </column>
+        </createTable>
+    </changeSet>
+
+</databaseChangeLog>

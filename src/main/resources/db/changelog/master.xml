@@ -20,4 +20,6 @@
         </createTable>
     </changeSet>
 
+    <include file="db/changelog/001-add-tables.xml"/>
+
 </databaseChangeLog>
