@@ -131,6 +131,7 @@
             <column name="brand" value="Levi's"/>
             <column name="price" value="89.99"/>
             <column name="image_url" value="/images/jacket1.jpg"/>
+            <column name="ar_url" value="/images/jacket1ar.jpg"/>
             <column name="note" value="Perfect for spring weather"/>
             <column name="purchase_date" value="2024-03-10"/>
             <column name="last_worn_date" value="2024-05-20T14:00:00"/>
@@ -149,6 +150,7 @@
             <column name="brand" value="Zara"/>
             <column name="price" value="120.50"/>
             <column name="image_url" value="/images/dress1.jpg"/>
+            <column name="ar_url" value="/images/dress1ar.jpg"/>
             <column name="note" value="For special occasions"/>
             <column name="purchase_date" value="2024-01-15"/>
             <column name="last_worn_date" value="2024-04-12T19:30:00"/>

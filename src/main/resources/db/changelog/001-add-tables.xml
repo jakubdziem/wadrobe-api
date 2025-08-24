@@ -82,6 +82,7 @@
             <column name="brand" type="varchar(100)"/>
             <column name="price" type="decimal(10,2)"/>
             <column name="image_url" type="varchar(500)"/>
+            <column name="ar_url" type="varchar(500)"/>
             <column name="note" type="varchar(300)"/>
             <column name="purchase_date" type="date"/>
             <column name="last_worn_date" type="datetime"/>
