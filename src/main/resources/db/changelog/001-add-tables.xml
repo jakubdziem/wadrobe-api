@@ -53,7 +53,7 @@
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(200)"/>
-            <column name="date" type="datetime"/>
+            <column name="date" type="timestamp"/>
         </createTable>
 
         <createTable tableName="user_stats">
@@ -85,9 +85,9 @@
             <column name="ar_url" type="varchar(500)"/>
             <column name="note" type="varchar(300)"/>
             <column name="purchase_date" type="date"/>
-            <column name="last_worn_date" type="datetime"/>
+            <column name="last_worn_date" type="timestamp"/>
             <column name="wear_count" type="smallint" defaultValueNumeric="0"/>
-            <column name="is_favorite" type="tinyint" defaultValueNumeric="0"/>
+            <column name="is_favorite" type="boolean" defaultValueNumeric="0"/>
             <column name="user_id" type="UUID">
                 <constraints nullable="false" foreignKeyName="fk_piece_user" references="users(user_id)"/>
             </column>
@@ -109,7 +109,7 @@
             <column name="worn_date_id" type="UUID">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
-            <column name="date" type="datetime">
+            <column name="date" type="timestamp">
                 <constraints nullable="false"/>
             </column>
             <column name="piece_of_clothing_id" type="UUID">

@@ -5,7 +5,6 @@ import lombok.AllArgsConstructor;
 import lombok.NoArgsConstructor;
 
 import java.util.UUID;
-import jakarta.persistence.*;
 import lombok.*;
 import java.util.*;
 
@@ -18,7 +17,7 @@ import java.util.*;
 @Table(name = "users")
 public class User {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue
     @Column(name = "user_id", updatable = false, nullable = false)
     private UUID userId;
 

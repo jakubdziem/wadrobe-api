@@ -3,6 +3,7 @@ package org.dziem.clothesarserver.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 @Entity
@@ -19,7 +20,7 @@ public class UserStats {
     private UUID id;
 
     @Column(nullable = false, precision = 15, scale = 2)
-    private Double wardrobePrice;
+    private BigDecimal wardrobePrice;
 
     @Column(nullable = false)
     private Short outfitsCount;

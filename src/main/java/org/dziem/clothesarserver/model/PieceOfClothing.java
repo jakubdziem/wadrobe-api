@@ -3,6 +3,7 @@ package org.dziem.clothesarserver.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
@@ -23,7 +24,10 @@ public class PieceOfClothing {
 
     private String name;
     private String brand;
-    private Double price;
+
+    @Column(precision = 10, scale = 2)
+    private BigDecimal price;
+
     private String imageUrl;
     private String arUrl;
     private String note;
