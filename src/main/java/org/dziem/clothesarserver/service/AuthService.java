@@ -1,6 +1,5 @@
 package org.dziem.clothesarserver.service;
 
-import lombok.RequiredArgsConstructor;
 import org.dziem.clothesarserver.dto.AuthResponse;
 import org.dziem.clothesarserver.dto.LoginRequest;
 import org.dziem.clothesarserver.dto.RegisterRequest;
@@ -9,14 +8,24 @@ import org.dziem.clothesarserver.repository.UserRepository;
 import org.dziem.clothesarserver.security.JwtProvider;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.data.redis.core.StringRedisTemplate;
+
+import java.util.UUID;
 
 @Service
-@RequiredArgsConstructor
 public class AuthService {
 
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
+    private final StringRedisTemplate redisTemplate;
+
+    public AuthService(UserRepository userRepository, JwtProvider jwtProvider, PasswordEncoder passwordEncoder, StringRedisTemplate redisTemplate) {
+        this.userRepository = userRepository;
+        this.jwtProvider = jwtProvider;
+        this.passwordEncoder = passwordEncoder;
+        this.redisTemplate = redisTemplate;
+    }
 
     public boolean register(RegisterRequest request) {
         if (userRepository.findByEmail(request.getEmail()).isPresent()) return false;
@@ -35,9 +44,20 @@ public class AuthService {
             throw new RuntimeException("Invalid credentials");
         }
 
-        String accessToken = jwtProvider.generateToken(user.getEmail());
-
+        String userId = user.getUserId().toString();
+        String accessToken = jwtProvider.generateToken(userId);
+        String redisKey = "userTokens:" + userId;
+        redisTemplate.opsForSet().add(redisKey, accessToken);
         return new AuthResponse(user.getUserId(), accessToken, request.getEmail());
+    }
+
+    public boolean logout(String userId) {
+        if(userRepository.findByUserId(UUID.fromString(userId)).isPresent()) {
+            String redisKey = "userTokens:" + userId;
+            redisTemplate.delete(redisKey);
+            return true;
+        }
+        return false;
     }
 }
 

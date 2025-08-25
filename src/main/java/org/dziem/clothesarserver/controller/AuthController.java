@@ -35,8 +35,6 @@ public class AuthController {
 
     @PostMapping("/logout/{userId}")
     public ResponseEntity<Void> logout(@PathVariable String userId) {
-        //smth
-        return ResponseEntity.ok().build();
+        return authService.logout(userId) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
     }
-//    logout endpoint success to wtedy usunie lokanie usuwanie tokenow, tylko success
 }
