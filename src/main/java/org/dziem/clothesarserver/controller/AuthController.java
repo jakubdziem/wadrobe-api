@@ -1,7 +1,6 @@
 package org.dziem.clothesarserver.controller;
 
 import jakarta.validation.Valid;
-import lombok.RequiredArgsConstructor;
 import org.dziem.clothesarserver.dto.AuthResponse;
 import org.dziem.clothesarserver.dto.LoginRequest;
 import org.dziem.clothesarserver.dto.RegisterRequest;
@@ -11,10 +10,13 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/auth")
-@RequiredArgsConstructor
 public class AuthController {
 
     private final AuthService authService;
+
+    public AuthController(AuthService authService) {
+        this.authService = authService;
+    }
 
     @PostMapping("/register")
     public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
