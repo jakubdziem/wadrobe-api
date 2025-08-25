@@ -1,4 +1,4 @@
-package org.dziem.clothesarserver;
+package org.dziem.clothesarserver.controller;
 
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,7 +22,7 @@ public class AuthController {
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 
@@ -30,4 +30,11 @@ public class AuthController {
     public ResponseEntity<Void> me() {
         return ResponseEntity.ok().build();
     }
+
+    @PostMapping("/logout/{userId}")
+    public ResponseEntity<Void> logout(@PathVariable String userId) {
+        //smth
+        return ResponseEntity.ok().build();
+    }
+//    logout endpoint success to wtedy usunie lokanie usuwanie tokenow, tylko success
 }

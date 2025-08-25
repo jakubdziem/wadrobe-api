@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
+
+    <changeSet id="002-insert-sample-data" author="jakub">
+
+        <!-- Insert sample conditions -->
+        <insert tableName="condition">
+            <column name="condition_id" value="a1b2c3d4-e5f6-7890-abcd-ef1234567890"/>
+            <column name="name" value="New"/>
+        </insert>
+        <insert tableName="condition">
+            <column name="condition_id" value="b2c3d4e5-f6a7-8901-bcde-f23456789012"/>
+            <column name="name" value="Excellent"/>
+        </insert>
+        <insert tableName="condition">
+            <column name="condition_id" value="c3d4e5f6-a7b8-9012-cdef-345678901234"/>
+            <column name="name" value="Good"/>
+        </insert>
+        <insert tableName="condition">
+            <column name="condition_id" value="d4e5f6a7-b8c9-0123-deff-456789012345"/>
+            <column name="name" value="Fair"/>
+        </insert>
+        <insert tableName="condition">
+            <column name="condition_id" value="e5f6a7b8-c9d0-1234-ffff-567890123456"/>
+            <column name="name" value="Poor"/>
+        </insert>
+
+        <!-- Insert sample sizes -->
+        <insert tableName="size">
+            <column name="size_id" value="f6a7b8c9-d0e1-2345-ffff-678901234567"/>
+            <column name="name" value="XS"/>
+        </insert>
+        <insert tableName="size">
+            <column name="size_id" value="a7b8c9d0-e1f2-3456-1234-789012345678"/>
+            <column name="name" value="S"/>
+        </insert>
+        <insert tableName="size">
+            <column name="size_id" value="b8c9d0e1-f2a3-4567-1234-890123456789"/>
+            <column name="name" value="M"/>
+        </insert>
+        <insert tableName="size">
+            <column name="size_id" value="c9d0e1f2-a3b4-5678-4321-901234567890"/>
+            <column name="name" value="L"/>
+        </insert>
+        <insert tableName="size">
+            <column name="size_id" value="d0e1f2a3-b4c5-6789-5555-012345678901"/>
+            <column name="name" value="XL"/>
+        </insert>
+
+        <!-- Insert sample categories -->
+        <insert tableName="category">
+            <column name="category_id" value="e1f2a3b4-c5d6-7890-7777-123456789012"/>
+            <column name="name" value="T-Shirts"/>
+        </insert>
+        <insert tableName="category">
+            <column name="category_id" value="f2a3b4c5-d6e7-8901-9898-234567890123"/>
+            <column name="name" value="Jeans"/>
+        </insert>
+        <insert tableName="category">
+            <column name="category_id" value="a3b4c5d6-e7f8-9012-9090-345678901234"/>
+            <column name="name" value="Dresses"/>
+        </insert>
+        <insert tableName="category">
+            <column name="category_id" value="b4c5d6e7-f8a9-0123-4444-456789012345"/>
+            <column name="name" value="Jackets"/>
+        </insert>
+        <insert tableName="category">
+            <column name="category_id" value="c5d6e7f8-a9b0-1234-5555-567890123456"/>
+            <column name="name" value="Shoes"/>
+        </insert>
+
+        <!-- Insert sample tags -->
+        <insert tableName="tag">
+            <column name="tag_id" value="d6e7f8a9-b0c1-2345-5555-678901234567"/>
+            <column name="name" value="Casual"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="tag_id" value="e7f8a9b0-c1d2-3456-aaaa-789012345678"/>
+            <column name="name" value="Formal"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="tag_id" value="f8a9b0c1-d2e3-4567-5555-890123456789"/>
+            <column name="name" value="Summer"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="tag_id" value="a9b0c1d2-e3f4-5678-5555-901234567890"/>
+            <column name="name" value="Winter"/>
+        </insert>
+        <insert tableName="tag">
+            <column name="tag_id" value="b0c1d2e3-f4a5-6789-5555-012345678901"/>
+            <column name="name" value="Sportswear"/>
+        </insert>
+
+        <!-- Insert sample user -->
+        <insert tableName="users">
+            <column name="user_id" value="550e8400-e29b-41d4-a716-446655440000"/>
+            <column name="email" value="user@example.com"/>
+            <column name="password" value="$2a$10$exampleHashedPasswordString"/>
+        </insert>
+
+        <!-- Insert sample user stats -->
+        <insert tableName="user_stats">
+            <column name="user_stats_id" value="660e8400-e29b-41d4-a716-446655440001"/>
+            <column name="wardrobe_price" value="1250.00"/>
+            <column name="outfits_count" value="3"/>
+            <column name="clothes_count" value="8"/>
+            <column name="user_id" value="550e8400-e29b-41d4-a716-446655440000"/>
+        </insert>
+
+        <!-- Insert sample occasions -->
+        <insert tableName="occasion">
+            <column name="occasion_id" value="770e8400-e29b-41d4-a716-446655440002"/>
+            <column name="name" value="Summer Vacation"/>
+            <column name="date" value="2024-07-15T10:00:00"/>
+        </insert>
+        <insert tableName="occasion">
+            <column name="occasion_id" value="880e8400-e29b-41d4-a716-446655440003"/>
+            <column name="name" value="Wedding Ceremony"/>
+            <column name="date" value="2024-09-20T15:30:00"/>
+        </insert>
+
+        <!-- Insert sample pieces of clothing -->
+        <insert tableName="piece_of_clothing">
+            <column name="piece_of_clothing_id" value="990e8400-e29b-41d4-a716-446655440004"/>
+            <column name="name" value="Blue Denim Jacket"/>
+            <column name="brand" value="Levi's"/>
+            <column name="price" value="89.99"/>
+            <column name="image_url" value="/images/jacket1.jpg"/>
+            <column name="ar_url" value="/images/jacket1ar.jpg"/>
+            <column name="note" value="Perfect for spring weather"/>
+            <column name="purchase_date" value="2024-03-10"/>
+            <column name="last_worn_date" value="2024-05-20T14:00:00"/>
+            <column name="wear_count" value="5"/>
+            <column name="is_favorite" value="1"/>
+            <column name="user_id" value="550e8400-e29b-41d4-a716-446655440000"/>
+            <column name="condition_id" value="b2c3d4e5-f6a7-8901-bcde-f23456789012"/>
+            <column name="size_id" value="b8c9d0e1-f2a3-4567-1234-890123456789"/>
+            <column name="category_id" value="b4c5d6e7-f8a9-0123-4444-456789012345"/>
+            <column name="tag_id" value="d6e7f8a9-b0c1-2345-5555-678901234567"/>
+        </insert>
+
+        <insert tableName="piece_of_clothing">
+            <column name="piece_of_clothing_id" value="aa0e8400-e29b-41d4-a716-446655440005"/>
+            <column name="name" value="Black Evening Dress"/>
+            <column name="brand" value="Zara"/>
+            <column name="price" value="120.50"/>
+            <column name="image_url" value="/images/dress1.jpg"/>
+            <column name="ar_url" value="/images/dress1ar.jpg"/>
+            <column name="note" value="For special occasions"/>
+            <column name="purchase_date" value="2024-01-15"/>
+            <column name="last_worn_date" value="2024-04-12T19:30:00"/>
+            <column name="wear_count" value="2"/>
+            <column name="is_favorite" value="0"/>
+            <column name="user_id" value="550e8400-e29b-41d4-a716-446655440000"/>
+            <column name="condition_id" value="a1b2c3d4-e5f6-7890-abcd-ef1234567890"/>
+            <column name="size_id" value="a7b8c9d0-e1f2-3456-1234-789012345678"/>
+            <column name="category_id" value="a3b4c5d6-e7f8-9012-9090-345678901234"/>
+            <column name="tag_id" value="e7f8a9b0-c1d2-3456-aaaa-789012345678"/>
+        </insert>
+
+        <!-- Insert sample worn dates -->
+        <insert tableName="worn_date">
+            <column name="worn_date_id" value="bb0e8400-e29b-41d4-a716-446655440006"/>
+            <column name="date" value="2024-05-20T14:00:00"/>
+            <column name="piece_of_clothing_id" value="990e8400-e29b-41d4-a716-446655440004"/>
+        </insert>
+
+        <!-- Insert sample occasion-clothing relationships -->
+        <insert tableName="occasion_has_piece_of_clothing">
+            <column name="occasion_id" value="880e8400-e29b-41d4-a716-446655440003"/>
+            <column name="piece_of_clothing_id" value="aa0e8400-e29b-41d4-a716-446655440005"/>
+        </insert>
+
+    </changeSet>
+
+</databaseChangeLog>
