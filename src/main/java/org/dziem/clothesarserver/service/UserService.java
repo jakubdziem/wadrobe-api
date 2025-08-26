@@ -1,24 +1,11 @@
 package org.dziem.clothesarserver.service;
 
-import org.dziem.clothesarserver.repository.UserRepository;
-import org.springframework.stereotype.Service;
-
 import java.util.UUID;
 
-@Service
-public class UserService {
-    private final UserRepository userRepository;
+public interface UserService {
 
-    public UserService(UserRepository userRepository) {
-        this.userRepository = userRepository;
-    }
+    boolean userExists(String userId);
 
-    public boolean userExists(String userId) {
-        return userRepository.findByUserId(UUID.fromString(userId)).isPresent();
-    }
-
-    public boolean userExists(UUID userId) {
-        return userRepository.findByUserId(userId).isPresent();
-    }
+    boolean userExists(UUID userId);
 
 }
