@@ -10,17 +10,17 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.StringRedisTemplate;
 
-import java.util.UUID;
-
 @Service
 public class AuthService {
 
+    private final UserService userService;
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
     private final PasswordEncoder passwordEncoder;
     private final StringRedisTemplate redisTemplate;
 
-    public AuthService(UserRepository userRepository, JwtProvider jwtProvider, PasswordEncoder passwordEncoder, StringRedisTemplate redisTemplate) {
+    public AuthService(UserService userService, UserRepository userRepository, JwtProvider jwtProvider, PasswordEncoder passwordEncoder, StringRedisTemplate redisTemplate) {
+        this.userService = userService;
         this.userRepository = userRepository;
         this.jwtProvider = jwtProvider;
         this.passwordEncoder = passwordEncoder;
@@ -52,7 +52,7 @@ public class AuthService {
     }
 
     public boolean logout(String userId) {
-        if(userRepository.findByUserId(UUID.fromString(userId)).isPresent()) {
+        if(userService.userExists(userId)) {
             String redisKey = "userTokens:" + userId;
             redisTemplate.delete(redisKey);
             return true;
