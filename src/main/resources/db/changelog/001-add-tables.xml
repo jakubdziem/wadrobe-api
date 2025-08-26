@@ -21,35 +21,35 @@
         </createTable>
 
         <createTable tableName="condition">
-            <column name="condition_id" type="UUID">
+            <column name="condition_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(50)"/>
         </createTable>
 
         <createTable tableName="size">
-            <column name="size_id" type="UUID">
+            <column name="size_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(50)"/>
         </createTable>
 
         <createTable tableName="category">
-            <column name="category_id" type="UUID">
+            <column name="category_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(50)"/>
         </createTable>
 
         <createTable tableName="tag">
-            <column name="tag_id" type="UUID">
+            <column name="tag_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(50)"/>
         </createTable>
 
         <createTable tableName="occasion">
-            <column name="occasion_id" type="UUID">
+            <column name="occasion_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(200)"/>
@@ -57,7 +57,7 @@
         </createTable>
 
         <createTable tableName="user_stats">
-            <column name="user_stats_id" type="UUID">
+            <column name="user_stats_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="wardrobe_price" type="decimal(15,2)">
@@ -75,7 +75,7 @@
         </createTable>
 
         <createTable tableName="piece_of_clothing">
-            <column name="piece_of_clothing_id" type="UUID">
+            <column name="piece_of_clothing_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="name" type="varchar(200)"/>
@@ -91,37 +91,37 @@
             <column name="user_id" type="UUID">
                 <constraints nullable="false" foreignKeyName="fk_piece_user" references="users(user_id)"/>
             </column>
-            <column name="condition_id" type="UUID">
+            <column name="condition_id" type="BIGINT">
                 <constraints nullable="true" foreignKeyName="fk_piece_condition" references="condition(condition_id)"/>
             </column>
-            <column name="size_id" type="UUID">
+            <column name="size_id" type="BIGINT">
                 <constraints nullable="true" foreignKeyName="fk_piece_size" references="size(size_id)"/>
             </column>
-            <column name="category_id" type="UUID">
+            <column name="category_id" type="BIGINT">
                 <constraints nullable="true" foreignKeyName="fk_piece_category" references="category(category_id)"/>
             </column>
-            <column name="tag_id" type="UUID">
+            <column name="tag_id" type="BIGINT">
                 <constraints nullable="true" foreignKeyName="fk_piece_tag" references="tag(tag_id)"/>
             </column>
         </createTable>
 
         <createTable tableName="worn_date">
-            <column name="worn_date_id" type="UUID">
+            <column name="worn_date_id" type="BIGSERIAL">
                 <constraints primaryKey="true" nullable="false"/>
             </column>
             <column name="date" type="timestamp">
                 <constraints nullable="false"/>
             </column>
-            <column name="piece_of_clothing_id" type="UUID">
+            <column name="piece_of_clothing_id" type="BIGINT">
                 <constraints nullable="false" foreignKeyName="fk_worn_piece" references="piece_of_clothing(piece_of_clothing_id)"/>
             </column>
         </createTable>
 
         <createTable tableName="occasion_has_piece_of_clothing">
-            <column name="occasion_id" type="UUID">
+            <column name="occasion_id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false" foreignKeyName="fk_ohpc_occasion" references="occasion(occasion_id)"/>
             </column>
-            <column name="piece_of_clothing_id" type="UUID">
+            <column name="piece_of_clothing_id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false" foreignKeyName="fk_ohpc_piece" references="piece_of_clothing(piece_of_clothing_id)"/>
             </column>
         </createTable>

@@ -4,7 +4,6 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.Date;
-import java.util.UUID;
 
 @Entity
 @Table(name = "worn_date")
@@ -15,9 +14,9 @@ import java.util.UUID;
 @Builder
 public class WornDate {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "worn_date_id", nullable = false)
-    private UUID id;
+    private Long id;
 
     @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)

@@ -7,7 +7,6 @@ import java.math.BigDecimal;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "piece_of_clothing")
@@ -18,9 +17,9 @@ import java.util.UUID;
 @Builder
 public class PieceOfClothing {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "piece_of_clothing_id", nullable = false)
-    private UUID id;
+    private Long id;
 
     private String name;
     private String brand;

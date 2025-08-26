@@ -6,7 +6,6 @@ import lombok.*;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
-import java.util.UUID;
 
 @Entity
 @Table(name = "occasion")
@@ -17,9 +16,9 @@ import java.util.UUID;
 @Builder
 public class Occasion {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name = "occasion_id", nullable = false)
-    private UUID id;
+    private Long id;
 
     @Column(length = 200)
     private String name;
