@@ -3,6 +3,9 @@ package org.dziem.clothesarserver.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "tag")
 @Getter
@@ -18,5 +21,13 @@ public class Tag {
 
     @Column(length = 50)
     private String name;
+
+    @ManyToMany
+    @JoinTable(
+            name = "tag_has_piece_of_clothing",
+            joinColumns = @JoinColumn(name = "tag_id"),
+            inverseJoinColumns = @JoinColumn(name = "piece_of_clothing_id")
+    )
+    private List<PieceOfClothing> pieces = new ArrayList<>();
 }
 

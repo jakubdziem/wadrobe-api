@@ -50,8 +50,8 @@ public class PieceOfClothing {
     @ManyToOne @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToOne @JoinColumn(name = "tag_id")
-    private Tag tag;
+    @ManyToMany(mappedBy = "pieces")
+    private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "pieceOfClothing", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<WornDate> wornDates = new ArrayList<>();
