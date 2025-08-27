@@ -19,7 +19,7 @@ public class WardrobeController {
         this.wardrobeService = wardrobeService;
     }
 
-    @GetMapping("/wardrobe_preview/{userId}")
+    @GetMapping("/wardrobe-preview/{userId}")
     public ResponseEntity<List<PieceOfClothingPreviewDTO>> getWardrobePreview(@PathVariable String userId) {
         return wardrobeService.getWardrobePreview(userId);
     }
