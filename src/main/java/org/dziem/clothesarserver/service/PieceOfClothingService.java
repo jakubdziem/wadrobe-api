@@ -6,7 +6,7 @@ import org.springframework.http.ResponseEntity;
 
 public interface PieceOfClothingService {
 
-    ResponseEntity<AddPieceOfClothingDTO> addPieceOfClothingDTO();
+    ResponseEntity<Void> addPieceOfClothingDTO(AddPieceOfClothingDTO addPieceOfClothingDTO, String userId);
 
     ResponseEntity<PieceOfClothingDetailsDTO> getPieceOfClothingDetailsDTO(Long pieceOfClothingId);
 }

@@ -10,89 +10,69 @@
 
         <!-- Insert sample conditions -->
         <insert tableName="condition">
-            <column name="condition_id" value="1"/>
             <column name="name" value="New"/>
         </insert>
         <insert tableName="condition">
-            <column name="condition_id" value="2"/>
             <column name="name" value="Excellent"/>
         </insert>
         <insert tableName="condition">
-            <column name="condition_id" value="3"/>
             <column name="name" value="Good"/>
         </insert>
         <insert tableName="condition">
-            <column name="condition_id" value="4"/>
             <column name="name" value="Fair"/>
         </insert>
         <insert tableName="condition">
-            <column name="condition_id" value="5"/>
             <column name="name" value="Poor"/>
         </insert>
 
         <!-- Insert sample sizes -->
         <insert tableName="size">
-            <column name="size_id" value="1"/>
             <column name="name" value="XS"/>
         </insert>
         <insert tableName="size">
-            <column name="size_id" value="2"/>
             <column name="name" value="S"/>
         </insert>
         <insert tableName="size">
-            <column name="size_id" value="3"/>
             <column name="name" value="M"/>
         </insert>
         <insert tableName="size">
-            <column name="size_id" value="4"/>
             <column name="name" value="L"/>
         </insert>
         <insert tableName="size">
-            <column name="size_id" value="5"/>
             <column name="name" value="XL"/>
         </insert>
 
         <!-- Insert sample categories -->
         <insert tableName="category">
-            <column name="category_id" value="1"/>
             <column name="name" value="T-Shirts"/>
         </insert>
         <insert tableName="category">
-            <column name="category_id" value="2"/>
             <column name="name" value="Jeans"/>
         </insert>
         <insert tableName="category">
-            <column name="category_id" value="3"/>
             <column name="name" value="Dresses"/>
         </insert>
         <insert tableName="category">
-            <column name="category_id" value="4"/>
             <column name="name" value="Jackets"/>
         </insert>
         <insert tableName="category">
-            <column name="category_id" value="5"/>
             <column name="name" value="Shoes"/>
         </insert>
 
         <!-- Insert sample tags -->
         <insert tableName="tag">
-            <column name="tag_id" value="1"/>
             <column name="name" value="Casual"/>
         </insert>
         <insert tableName="tag">
-            <column name="tag_id" value="2"/>
             <column name="name" value="Formal"/>
         </insert>
         <insert tableName="tag">
-            <column name="tag_id" value="3"/>
             <column name="name" value="Summer"/>
         </insert>
         <insert tableName="tag">
-            <column name="tag_id" value="4"/>
             <column name="name" value="Winter"/>
         </insert>
         <insert tableName="tag">
-            <column name="tag_id" value="5"/>
             <column name="name" value="Sportswear"/>
         </insert>
 
@@ -105,7 +85,6 @@
 
         <!-- Insert sample user stats -->
         <insert tableName="user_stats">
-            <column name="user_stats_id" value="1"/>
             <column name="wardrobe_price" value="1250.00"/>
             <column name="outfits_count" value="3"/>
             <column name="clothes_count" value="8"/>
@@ -114,19 +93,16 @@
 
         <!-- Insert sample occasions -->
         <insert tableName="occasion">
-            <column name="occasion_id" value="1"/>
             <column name="name" value="Summer Vacation"/>
             <column name="date" value="2024-07-15T10:00:00"/>
         </insert>
         <insert tableName="occasion">
-            <column name="occasion_id" value="2"/>
             <column name="name" value="Wedding Ceremony"/>
             <column name="date" value="2024-09-20T15:30:00"/>
         </insert>
 
         <!-- Insert sample pieces of clothing -->
         <insert tableName="piece_of_clothing">
-            <column name="piece_of_clothing_id" value="1"/>
             <column name="name" value="Blue Denim Jacket"/>
             <column name="brand" value="Levi's"/>
             <column name="price" value="89.99"/>
@@ -144,7 +120,6 @@
         </insert>
 
         <insert tableName="piece_of_clothing">
-            <column name="piece_of_clothing_id" value="2"/>
             <column name="name" value="Black Evening Dress"/>
             <column name="brand" value="Zara"/>
             <column name="price" value="120.50"/>
@@ -163,7 +138,6 @@
 
         <!-- Insert sample worn dates -->
         <insert tableName="worn_date">
-            <column name="worn_date_id" value="1"/>
             <column name="date" value="2024-05-20T14:00:00"/>
             <column name="piece_of_clothing_id" value="1"/>
         </insert>

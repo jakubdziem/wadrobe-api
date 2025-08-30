@@ -34,7 +34,7 @@ public class PieceOfClothing {
     private Date purchaseDate;
     private Date lastWornDate;
 
-    private Short wearCount = 0;
+    private Integer wearCount = 0;
     private Boolean isFavorite = false;
 
     @ManyToOne
