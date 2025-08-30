@@ -13,6 +13,7 @@ import org.springframework.data.redis.core.StringRedisTemplate;
 @Service
 public class AuthServiceImpl implements AuthService {
 
+    public static final RuntimeException USER_NOT_FOUND = new RuntimeException("User not found");
     private final UserService userService;
     private final UserRepository userRepository;
     private final JwtProvider jwtProvider;
@@ -40,7 +41,7 @@ public class AuthServiceImpl implements AuthService {
     @Override
     public AuthResponse login(LoginRequest request) {
         User user = userRepository.findByEmail(request.getEmail())
-                .orElseThrow(() -> new RuntimeException("User not found"));
+                .orElseThrow(() -> USER_NOT_FOUND);
 
         if (!passwordEncoder.matches(request.getPassword(), user.getPassword())) {
             throw new RuntimeException("Invalid credentials");
@@ -60,7 +61,7 @@ public class AuthServiceImpl implements AuthService {
             redisTemplate.delete(redisKey);
             return true;
         }
-        return false;
+        throw USER_NOT_FOUND;
     }
 }
 
