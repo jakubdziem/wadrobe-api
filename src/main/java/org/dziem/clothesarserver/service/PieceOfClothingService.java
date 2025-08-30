@@ -9,4 +9,8 @@ public interface PieceOfClothingService {
     ResponseEntity<Void> addPieceOfClothingDTO(AddPieceOfClothingDTO addPieceOfClothingDTO, String userId);
 
     ResponseEntity<PieceOfClothingDetailsDTO> getPieceOfClothingDetailsDTO(Long pieceOfClothingId);
+
+    ResponseEntity<Void> toggleIsFavorite(Long pieceOfClothingId, boolean isFavorite);
+
+    ResponseEntity<Integer> incrementWearCount(Long pieceOfClothingId);
 }

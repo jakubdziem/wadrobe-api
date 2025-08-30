@@ -58,5 +58,10 @@ public class PieceOfClothing {
 
     @ManyToMany(mappedBy = "pieces")
     private List<Occasion> occasions = new ArrayList<>();
+
+    public int incrementWearCount() {
+        this.wearCount++;
+        return wearCount;
+    }
 }
 

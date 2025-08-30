@@ -26,4 +26,14 @@ public class PieceOfClothingController {
         return pieceOfClothingService.getPieceOfClothingDetailsDTO(pieceOfClothingId);
     }
 
+    @PostMapping("/piece-of-clothing/toggle-favorite/{pieceOfClothingId}")
+    public ResponseEntity<Void> toggleIsFavorite(@PathVariable Long pieceOfClothingId, @RequestBody boolean isFavorite) {
+        return pieceOfClothingService.toggleIsFavorite(pieceOfClothingId, isFavorite);
+    }
+
+    @PostMapping("/piece-of-clothing/increment-wear-count/{pieceOfClothingId}")
+    public ResponseEntity<Integer> incrementWearCount(@PathVariable Long pieceOfClothingId) {
+        return pieceOfClothingService.incrementWearCount(pieceOfClothingId);
+    }
+
 }

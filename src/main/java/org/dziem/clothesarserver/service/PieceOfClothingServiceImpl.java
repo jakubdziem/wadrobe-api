@@ -101,4 +101,24 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
                 .occasions(pieceOfClothing.getOccasions().stream().map(Occasion::getName).toList())
                 .arUrl(pieceOfClothing.getArUrl()).build());
     }
+
+    @Override
+    public ResponseEntity<Void> toggleIsFavorite(Long pieceOfClothingId, boolean isFavorite) {
+        Optional<PieceOfClothing> pieceOfClothingOptional = pieceOfClothingRepository.findById(pieceOfClothingId);
+        if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
+        PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
+        pieceOfClothing.setIsFavorite(isFavorite);
+        pieceOfClothingRepository.save(pieceOfClothing);
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Integer> incrementWearCount(Long pieceOfClothingId) {
+        Optional<PieceOfClothing> pieceOfClothingOptional = pieceOfClothingRepository.findById(pieceOfClothingId);
+        if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
+        PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
+        int incrementedWearCount = pieceOfClothing.incrementWearCount();
+        pieceOfClothingRepository.save(pieceOfClothing);
+        return ResponseEntity.ok(incrementedWearCount);
+    }
 }
