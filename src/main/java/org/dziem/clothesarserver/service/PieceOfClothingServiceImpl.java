@@ -7,9 +7,7 @@ import org.dziem.clothesarserver.repository.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.List;
-import java.util.Optional;
-import java.util.UUID;
+import java.util.*;
 
 @Service
 public class PieceOfClothingServiceImpl implements PieceOfClothingService {
@@ -20,8 +18,9 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
     private final ConditionRepository conditionRepository;
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
+    private final WornDateRepository wornDateRepository;
 
-    public PieceOfClothingServiceImpl(PieceOfClothingRepository pieceOfClothingRepository, UserService userService, CategoryRepository categoryRepository, SizeRepository sizeRepository, ConditionRepository conditionRepository, TagRepository tagRepository, UserRepository userRepository) {
+    public PieceOfClothingServiceImpl(PieceOfClothingRepository pieceOfClothingRepository, UserService userService, CategoryRepository categoryRepository, SizeRepository sizeRepository, ConditionRepository conditionRepository, TagRepository tagRepository, UserRepository userRepository, WornDateRepository wornDateRepository) {
         this.pieceOfClothingRepository = pieceOfClothingRepository;
         this.userService = userService;
         this.categoryRepository = categoryRepository;
@@ -29,6 +28,7 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
         this.conditionRepository = conditionRepository;
         this.tagRepository = tagRepository;
         this.userRepository = userRepository;
+        this.wornDateRepository = wornDateRepository;
     }
 
     @Override
@@ -116,8 +116,12 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
     public ResponseEntity<Integer> incrementWearCount(Long pieceOfClothingId) {
         Optional<PieceOfClothing> pieceOfClothingOptional = pieceOfClothingRepository.findById(pieceOfClothingId);
         if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
+
         PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
+        WornDate wornDate = WornDate.builder().date(new Date()).pieceOfClothing(pieceOfClothing).build();
+        wornDateRepository.save(wornDate);
         int incrementedWearCount = pieceOfClothing.incrementWearCount();
+        pieceOfClothing.setLastWornDate(new Date());
         pieceOfClothingRepository.save(pieceOfClothing);
         return ResponseEntity.ok(incrementedWearCount);
     }

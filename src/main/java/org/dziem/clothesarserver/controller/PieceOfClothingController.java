@@ -27,7 +27,7 @@ public class PieceOfClothingController {
     }
 
     @PostMapping("/piece-of-clothing/toggle-favorite/{pieceOfClothingId}")
-    public ResponseEntity<Void> toggleIsFavorite(@PathVariable Long pieceOfClothingId, @RequestBody boolean isFavorite) {
+    public ResponseEntity<Void> toggleIsFavorite(@PathVariable Long pieceOfClothingId, @RequestParam boolean isFavorite) {
         return pieceOfClothingService.toggleIsFavorite(pieceOfClothingId, isFavorite);
     }
 
