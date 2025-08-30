@@ -4,4 +4,5 @@ public interface PieceOfClothingPreviewProjection {
     Boolean getIsFavorite();
     String getImageUrl();
     int getWearCount();
+    long getPieceOfClothingId();
 }

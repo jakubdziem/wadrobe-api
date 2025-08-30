@@ -141,7 +141,6 @@
             <column name="condition_id" value="2"/>
             <column name="size_id" value="3"/>
             <column name="category_id" value="4"/>
-            <column name="tag_id" value="1"/>
         </insert>
 
         <insert tableName="piece_of_clothing">
@@ -160,7 +159,6 @@
             <column name="condition_id" value="1"/>
             <column name="size_id" value="2"/>
             <column name="category_id" value="3"/>
-            <column name="tag_id" value="2"/>
         </insert>
 
         <!-- Insert sample worn dates -->
@@ -173,6 +171,13 @@
         <!-- Insert sample occasion-clothing relationships -->
         <insert tableName="occasion_has_piece_of_clothing">
             <column name="occasion_id" value="2"/>
+            <column name="piece_of_clothing_id" value="2"/>
+        </insert>
+
+
+        <!-- Insert sample tag-clothing relationships -->
+        <insert tableName="tag_has_piece_of_clothing">
+            <column name="tag_id" value="2"/>
             <column name="piece_of_clothing_id" value="2"/>
         </insert>
 

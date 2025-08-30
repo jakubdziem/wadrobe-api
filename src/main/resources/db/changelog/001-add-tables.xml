@@ -100,9 +100,6 @@
             <column name="category_id" type="BIGINT">
                 <constraints nullable="true" foreignKeyName="fk_piece_category" references="category(category_id)"/>
             </column>
-            <column name="tag_id" type="BIGINT">
-                <constraints nullable="true" foreignKeyName="fk_piece_tag" references="tag(tag_id)"/>
-            </column>
         </createTable>
 
         <createTable tableName="worn_date">
@@ -123,6 +120,15 @@
             </column>
             <column name="piece_of_clothing_id" type="BIGINT">
                 <constraints primaryKey="true" nullable="false" foreignKeyName="fk_ohpc_piece" references="piece_of_clothing(piece_of_clothing_id)"/>
+            </column>
+        </createTable>
+
+        <createTable tableName="tag_has_piece_of_clothing">
+            <column name="tag_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_thpc_tag" references="tag(tag_id)"/>
+            </column>
+            <column name="piece_of_clothing_id" type="BIGINT">
+                <constraints primaryKey="true" nullable="false" foreignKeyName="fk_thpc_piece" references="piece_of_clothing(piece_of_clothing_id)"/>
             </column>
         </createTable>
     </changeSet>

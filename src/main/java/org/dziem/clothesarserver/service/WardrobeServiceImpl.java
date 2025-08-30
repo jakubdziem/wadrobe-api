@@ -29,7 +29,8 @@ public class WardrobeServiceImpl implements WardrobeService {
                             new PieceOfClothingPreviewDTO(
                                     projection.getIsFavorite(),
                                     projection.getImageUrl(),
-                                    projection.getWearCount()))
+                                    projection.getWearCount(),
+                                    projection.getPieceOfClothingId()))
                         .toList();
 
         return ResponseEntity.ok(pieceOfClothingPreviewDTOs);

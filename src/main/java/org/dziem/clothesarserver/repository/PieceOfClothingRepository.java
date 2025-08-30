@@ -11,7 +11,8 @@ public interface PieceOfClothingRepository extends JpaRepository<PieceOfClothing
 
     @Query("SELECT p.isFavorite AS isFavorite, " +
             "       p.imageUrl AS imageUrl, " +
-            "       p.wearCount AS wearCount " +
+            "       p.wearCount AS wearCount, " +
+            "       p.id AS pieceOfClothingId " +
             "FROM PieceOfClothing p " +
             "WHERE p.user.userId = :userId")
     List<PieceOfClothingPreviewProjection> findPieceOfClothingPreviewListByUserId(UUID userId);
