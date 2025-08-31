@@ -4,8 +4,8 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -31,8 +31,8 @@ public class PieceOfClothing {
     private String arUrl;
     private String note;
 
-    private Date purchaseDate;
-    private Date lastWornDate;
+    private LocalDate purchaseDate;
+    private LocalDate lastWornDate;
 
     private Integer wearCount = 0;
     private Boolean isFavorite = false;

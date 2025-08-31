@@ -3,7 +3,7 @@ package org.dziem.clothesarserver.model;
 import jakarta.persistence.*;
 import lombok.*;
 
-import java.util.Date;
+import java.time.LocalDate;
 
 @Entity
 @Table(name = "worn_date")
@@ -18,9 +18,8 @@ public class WornDate {
     @Column(name = "worn_date_id", nullable = false)
     private Long id;
 
-    @Temporal(TemporalType.TIMESTAMP)
     @Column(nullable = false)
-    private Date date;
+    private LocalDate date;
 
     @ManyToOne
     @JoinColumn(name = "piece_of_clothing_id", nullable = false)

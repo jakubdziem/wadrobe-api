@@ -3,8 +3,8 @@ package org.dziem.clothesarserver.model;
 import jakarta.persistence.*;
 import lombok.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
-import java.util.Date;
 import java.util.List;
 
 @Entity
@@ -23,8 +23,7 @@ public class Occasion {
     @Column(length = 200)
     private String name;
 
-    @Temporal(TemporalType.TIMESTAMP)
-    private Date date;
+    private LocalDate date;
 
     @ManyToMany
     @JoinTable(
