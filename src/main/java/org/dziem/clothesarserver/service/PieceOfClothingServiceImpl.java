@@ -2,11 +2,13 @@ package org.dziem.clothesarserver.service;
 
 import org.dziem.clothesarserver.dto.AddPieceOfClothingDTO;
 import org.dziem.clothesarserver.dto.PieceOfClothingDetailsDTO;
+import org.dziem.clothesarserver.dto.UpdatePieceOfClothingDTO;
 import org.dziem.clothesarserver.model.*;
 import org.dziem.clothesarserver.repository.*;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -20,8 +22,9 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
     private final TagRepository tagRepository;
     private final UserRepository userRepository;
     private final WornDateRepository wornDateRepository;
+    private final OccasionRepository occasionRepository;
 
-    public PieceOfClothingServiceImpl(PieceOfClothingRepository pieceOfClothingRepository, UserService userService, CategoryRepository categoryRepository, SizeRepository sizeRepository, ConditionRepository conditionRepository, TagRepository tagRepository, UserRepository userRepository, WornDateRepository wornDateRepository) {
+    public PieceOfClothingServiceImpl(PieceOfClothingRepository pieceOfClothingRepository, UserService userService, CategoryRepository categoryRepository, SizeRepository sizeRepository, ConditionRepository conditionRepository, TagRepository tagRepository, UserRepository userRepository, WornDateRepository wornDateRepository, OccasionRepository occasionRepository) {
         this.pieceOfClothingRepository = pieceOfClothingRepository;
         this.userService = userService;
         this.categoryRepository = categoryRepository;
@@ -30,47 +33,14 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
         this.tagRepository = tagRepository;
         this.userRepository = userRepository;
         this.wornDateRepository = wornDateRepository;
+        this.occasionRepository = occasionRepository;
     }
 
     @Override
     public ResponseEntity<Void> addPieceOfClothingDTO(AddPieceOfClothingDTO addPieceOfClothingDTO, String userId) {
         if(!userService.userExists(userId)) return ResponseEntity.notFound().build();
 
-        List<Category> categories = categoryRepository.findAllByName(addPieceOfClothingDTO.getCategory());
-        Category category;
-        category = categories.isEmpty() ?
-                Category.builder().name(addPieceOfClothingDTO.getCategory()).build() : categories.getFirst();
-        category = categoryRepository.save(category);
-
-        List<Size> sizes = sizeRepository.findAllByName(addPieceOfClothingDTO.getSize());
-        Size size;
-        size = sizes.isEmpty() ?
-                Size.builder().name(addPieceOfClothingDTO.getSize()).build() : sizes.getFirst();
-        size = sizeRepository.save(size);
-
-
-        List<Condition> conditions = conditionRepository.findAllByName(addPieceOfClothingDTO.getCondition());
-        Condition condition;
-        condition = conditions.isEmpty() ?
-                Condition.builder().name(addPieceOfClothingDTO.getCondition()).build() : conditions.getFirst();
-        condition = conditionRepository.save(condition);
-
-        List<String> tagNames = addPieceOfClothingDTO.getTags();
-        List<Tag> existingTags = tagRepository.findAllByNames(tagNames);
-
-        Set<String> existingNames = existingTags.stream()
-                .map(Tag::getName)
-                .collect(Collectors.toSet());
-
-        List<Tag> newTags = tagNames.stream()
-                .filter(name -> !existingNames.contains(name))
-                .map(name -> Tag.builder().name(name).build())
-                .toList();
-
-        List<Tag> savedNewTags = tagRepository.saveAll(newTags);
-
-        List<Tag> allTags = new ArrayList<>(existingTags);
-        allTags.addAll(savedNewTags);
+        PieceOfClothingRelations pieceOfClothingRelations = updatePieceOfClothingRelations(addPieceOfClothingDTO);
 
         pieceOfClothingRepository.save(PieceOfClothing.builder()
                 .user(userRepository.getReferenceById(UUID.fromString(userId)))
@@ -79,13 +49,13 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
                 .lastWornDate(null)
                 .name(addPieceOfClothingDTO.getName())
                 .imageUrl(addPieceOfClothingDTO.getImageUrl())
-                .category(category)
+                .category(pieceOfClothingRelations.category())
                 .purchaseDate(addPieceOfClothingDTO.getPurchaseDate())
-                .size(size)
-                .condition(condition)
+                .size(pieceOfClothingRelations.size())
+                .condition(pieceOfClothingRelations.condition())
                 .note(addPieceOfClothingDTO.getNote())
                 .price(addPieceOfClothingDTO.getPrice())
-                .tags(allTags)
+                .tags(pieceOfClothingRelations.allTags())
                 .brand(addPieceOfClothingDTO.getBrand())
                 .arUrl(addPieceOfClothingDTO.getArUrl())
                 .build());
@@ -129,11 +99,97 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
         if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
 
         PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
-        WornDate wornDate = WornDate.builder().date(new Date()).pieceOfClothing(pieceOfClothing).build();
+        WornDate wornDate = WornDate.builder().date(LocalDate.now()).pieceOfClothing(pieceOfClothing).build();
         wornDateRepository.save(wornDate);
         int incrementedWearCount = pieceOfClothing.incrementWearCount();
-        pieceOfClothing.setLastWornDate(new Date());
+        pieceOfClothing.setLastWornDate(LocalDate.now());
         pieceOfClothingRepository.save(pieceOfClothing);
         return ResponseEntity.ok(incrementedWearCount);
+    }
+
+    @Override
+    public ResponseEntity<Void> updatePieceOfClothing(UpdatePieceOfClothingDTO updatePieceOfClothingDTO, Long pieceOfClothingId) {
+        Optional<PieceOfClothing> pieceOfClothingOptional = pieceOfClothingRepository.findById(pieceOfClothingId);
+        if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
+
+        PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
+
+        PieceOfClothingRelations pieceOfClothingRelations = updatePieceOfClothingRelations(new AddPieceOfClothingDTO(updatePieceOfClothingDTO));
+
+
+        List<Occasion> occasions = occasionRepository.findAllByPieceOfClothingId(pieceOfClothing.getId());
+
+        List<String> occasionNames = updatePieceOfClothingDTO.getOccasions();
+        if(!occasionNames.isEmpty()) {
+            for (String name : occasionNames) {
+                occasions.add(Occasion.builder().name(name).date(LocalDate.now()).build());
+            }
+        }
+
+        //ocassions are not saving properly :(
+
+        List<Occasion> savedNewOccasions = occasionRepository.saveAll(occasions);
+
+        pieceOfClothing.setWearCount(0);
+        pieceOfClothing.setOccasions(savedNewOccasions);
+        pieceOfClothing.setIsFavorite(false);
+        pieceOfClothing.setLastWornDate(null);
+        pieceOfClothing.setName(updatePieceOfClothingDTO.getName());
+        pieceOfClothing.setImageUrl(updatePieceOfClothingDTO.getImageUrl());
+        pieceOfClothing.setCategory(pieceOfClothingRelations.category);
+        pieceOfClothing.setPurchaseDate(updatePieceOfClothingDTO.getPurchaseDate());
+        pieceOfClothing.setSize(pieceOfClothingRelations.size);
+        pieceOfClothing.setCondition(pieceOfClothingRelations.condition);
+        pieceOfClothing.setNote(updatePieceOfClothingDTO.getNote());
+        pieceOfClothing.setPrice(updatePieceOfClothingDTO.getPrice());
+        pieceOfClothing.setTags(pieceOfClothingRelations.allTags);
+        pieceOfClothing.setBrand(updatePieceOfClothingDTO.getBrand());
+        pieceOfClothing.setArUrl(updatePieceOfClothingDTO.getArUrl());
+        pieceOfClothingRepository.save(pieceOfClothing);
+
+        return ResponseEntity.ok().build();
+    }
+
+    private PieceOfClothingRelations updatePieceOfClothingRelations(AddPieceOfClothingDTO addPieceOfClothingDTO) {
+        List<Category> categories = categoryRepository.findAllByName(addPieceOfClothingDTO.getCategory());
+        Category category;
+        category = categories.isEmpty() ?
+                Category.builder().name(addPieceOfClothingDTO.getCategory()).build() : categories.getFirst();
+        category = categoryRepository.save(category);
+
+        List<Size> sizes = sizeRepository.findAllByName(addPieceOfClothingDTO.getSize());
+        Size size;
+        size = sizes.isEmpty() ?
+                Size.builder().name(addPieceOfClothingDTO.getSize()).build() : sizes.getFirst();
+        size = sizeRepository.save(size);
+
+
+        List<Condition> conditions = conditionRepository.findAllByName(addPieceOfClothingDTO.getCondition());
+        Condition condition;
+        condition = conditions.isEmpty() ?
+                Condition.builder().name(addPieceOfClothingDTO.getCondition()).build() : conditions.getFirst();
+        condition = conditionRepository.save(condition);
+
+        List<String> tagNames = addPieceOfClothingDTO.getTags();
+        List<Tag> existingTags = tagRepository.findNamesByPieceOfClothingIds(tagNames);
+
+        Set<String> existingNames = existingTags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.toSet());
+
+        List<Tag> newTags = tagNames.stream()
+                .filter(name -> !existingNames.contains(name))
+                .map(name -> Tag.builder().name(name).build())
+                .toList();
+
+        List<Tag> savedNewTags = tagRepository.saveAll(newTags);
+
+        List<Tag> allTags = new ArrayList<>(existingTags);
+        allTags.addAll(savedNewTags);
+        return new PieceOfClothingRelations(category, size, condition, allTags);
+    }
+
+
+    private record PieceOfClothingRelations(Category category, Size size, Condition condition, List<Tag> allTags) {
     }
 }

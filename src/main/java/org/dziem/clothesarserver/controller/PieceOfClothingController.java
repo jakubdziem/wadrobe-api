@@ -2,6 +2,7 @@ package org.dziem.clothesarserver.controller;
 
 import org.dziem.clothesarserver.dto.AddPieceOfClothingDTO;
 import org.dziem.clothesarserver.dto.PieceOfClothingDetailsDTO;
+import org.dziem.clothesarserver.dto.UpdatePieceOfClothingDTO;
 import org.dziem.clothesarserver.service.PieceOfClothingService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -34,6 +35,11 @@ public class PieceOfClothingController {
     @PostMapping("/piece-of-clothing/increment-wear-count/{pieceOfClothingId}")
     public ResponseEntity<Integer> incrementWearCount(@PathVariable Long pieceOfClothingId) {
         return pieceOfClothingService.incrementWearCount(pieceOfClothingId);
+    }
+
+    @PutMapping("/piece-of-clothing/{pieceOfClothingId}")
+    public ResponseEntity<Void> updatePieceOfClothing(@RequestBody UpdatePieceOfClothingDTO updatePieceOfClothingDTO, @PathVariable Long pieceOfClothingId) {
+        return pieceOfClothingService.updatePieceOfClothing(updatePieceOfClothingDTO, pieceOfClothingId);
     }
 
 }
