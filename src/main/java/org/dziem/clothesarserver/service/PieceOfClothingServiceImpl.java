@@ -8,6 +8,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class PieceOfClothingServiceImpl implements PieceOfClothingService {
@@ -54,13 +55,22 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
                 Condition.builder().name(addPieceOfClothingDTO.getCondition()).build() : conditions.getFirst();
         condition = conditionRepository.save(condition);
 
-        List<Tag> tags = tagRepository.findAllByNames(addPieceOfClothingDTO.getTags());
-        if(tags.isEmpty()) {
-            List<Tag> finalTags = tags;
-            addPieceOfClothingDTO.getTags().forEach(t -> finalTags.add(Tag.builder().name(t).build()));
-            tags.addAll(finalTags);
-        }
-        tags = tagRepository.saveAll(tags);
+        List<String> tagNames = addPieceOfClothingDTO.getTags();
+        List<Tag> existingTags = tagRepository.findAllByNames(tagNames);
+
+        Set<String> existingNames = existingTags.stream()
+                .map(Tag::getName)
+                .collect(Collectors.toSet());
+
+        List<Tag> newTags = tagNames.stream()
+                .filter(name -> !existingNames.contains(name))
+                .map(name -> Tag.builder().name(name).build())
+                .toList();
+
+        List<Tag> savedNewTags = tagRepository.saveAll(newTags);
+
+        List<Tag> allTags = new ArrayList<>(existingTags);
+        allTags.addAll(savedNewTags);
 
         pieceOfClothingRepository.save(PieceOfClothing.builder()
                 .user(userRepository.getReferenceById(UUID.fromString(userId)))
@@ -75,7 +85,7 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
                 .condition(condition)
                 .note(addPieceOfClothingDTO.getNote())
                 .price(addPieceOfClothingDTO.getPrice())
-                .tags(tags)
+                .tags(allTags)
                 .brand(addPieceOfClothingDTO.getBrand())
                 .arUrl(addPieceOfClothingDTO.getArUrl())
                 .build());
@@ -89,6 +99,7 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
         if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
         PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
         return ResponseEntity.ok(PieceOfClothingDetailsDTO.builder()
+                .name(pieceOfClothing.getName())
                 .imageUrl(pieceOfClothing.getImageUrl())
                 .category(pieceOfClothing.getCategory().getName())
                 .purchaseDate(pieceOfClothing.getPurchaseDate())

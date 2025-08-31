@@ -10,6 +10,7 @@ import java.util.List;
 @Data
 @Builder
 public class PieceOfClothingDetailsDTO {
+    private String name;
     private String imageUrl;
     private String category;
     private Date purchaseDate;

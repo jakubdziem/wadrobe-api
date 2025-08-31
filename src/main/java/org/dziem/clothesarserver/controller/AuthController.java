@@ -35,6 +35,7 @@ public class AuthController {
 
     @PostMapping("/logout/{userId}")
     public ResponseEntity<Void> logout(@PathVariable String userId) {
-        return authService.logout(userId) ? ResponseEntity.ok().build() : ResponseEntity.notFound().build();
+        authService.logout(userId);
+        return ResponseEntity.ok().build();
     }
 }
