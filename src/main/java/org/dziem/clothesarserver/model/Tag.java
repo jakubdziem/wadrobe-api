@@ -22,12 +22,7 @@ public class Tag {
     @Column(length = 50)
     private String name;
 
-    @ManyToMany
-    @JoinTable(
-            name = "tag_has_piece_of_clothing",
-            joinColumns = @JoinColumn(name = "tag_id"),
-            inverseJoinColumns = @JoinColumn(name = "piece_of_clothing_id")
-    )
+    @ManyToMany(mappedBy = "tags")
     private List<PieceOfClothing> pieces = new ArrayList<>();
 }
 

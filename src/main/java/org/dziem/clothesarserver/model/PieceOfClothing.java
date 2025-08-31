@@ -50,7 +50,12 @@ public class PieceOfClothing {
     @ManyToOne @JoinColumn(name = "category_id")
     private Category category;
 
-    @ManyToMany(mappedBy = "pieces")
+    @ManyToMany
+    @JoinTable(
+            name = "tag_has_piece_of_clothing",
+            joinColumns = @JoinColumn(name = "piece_of_clothing_id"),
+            inverseJoinColumns = @JoinColumn(name = "tag_id")
+    )
     private List<Tag> tags = new ArrayList<>();
 
     @OneToMany(mappedBy = "pieceOfClothing", cascade = CascadeType.ALL, orphanRemoval = true)

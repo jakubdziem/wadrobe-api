@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+            http://www.liquibase.org/xml/ns/dbchangelog
+            http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-4.8.xsd">
+    <changeSet id="003-fix-tags-ownership" author="jakub">
+
+        <dropPrimaryKey tableName="tag_has_piece_of_clothing"/>
+
+        <addPrimaryKey
+                tableName="tag_has_piece_of_clothing"
+                columnNames="piece_of_clothing_id, tag_id"
+                constraintName="pk_thpc"/>
+
+        <dropForeignKeyConstraint baseTableName="tag_has_piece_of_clothing" constraintName="fk_thpc_tag"/>
+        <dropForeignKeyConstraint baseTableName="tag_has_piece_of_clothing" constraintName="fk_thpc_piece"/>
+
+        <addForeignKeyConstraint
+                baseTableName="tag_has_piece_of_clothing"
+                baseColumnNames="piece_of_clothing_id"
+                constraintName="fk_thpc_piece"
+                referencedTableName="piece_of_clothing"
+                referencedColumnNames="piece_of_clothing_id"/>
+
+        <addForeignKeyConstraint
+                baseTableName="tag_has_piece_of_clothing"
+                baseColumnNames="tag_id"
+                constraintName="fk_thpc_tag"
+                referencedTableName="tag"
+                referencedColumnNames="tag_id"/>
+    </changeSet>
+</databaseChangeLog>
