@@ -18,6 +18,7 @@ import java.util.List;
 import java.util.UUID;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -83,7 +84,6 @@ class WardrobeServiceImplTest {
         UUID uuid = UUID.fromString(userId);
         when(userService.userExists(uuid)).thenReturn(true);
 
-        // mock repository projection interface
         PieceOfClothingPreviewProjection projection1 = mock(PieceOfClothingPreviewProjection.class);
         PieceOfClothingPreviewProjection projection2 = mock(PieceOfClothingPreviewProjection.class);
         OccasionDTO occasion1 = new OccasionDTO("Occasion2", LocalDate.now());
@@ -116,11 +116,9 @@ class WardrobeServiceImplTest {
         List<PieceOfClothingPreviewDTO> result = response.getBody();
         assertThat(result).hasSize(2);
 
-        // verify sorting by pieceOfClothingId
         assertThat(result.get(0).getPieceOfClothingId()).isEqualTo(1L);
         assertThat(result.get(1).getPieceOfClothingId()).isEqualTo(2L);
 
-        // verify data mapping
         assertThat(result.get(0).getImageUrl()).isEqualTo("img1");
         assertThat(result.get(0).getOccasions()).containsExactly(occasion1);
         assertThat(result.get(0).getTags()).containsExactly("Tag1");
@@ -135,4 +133,43 @@ class WardrobeServiceImplTest {
         verify(tagRepository).findNamesByPieceOfClothingIds(1L);
         verify(tagRepository).findNamesByPieceOfClothingIds(2L);
     }
+
+    @Test
+    void getWardrobePreview_shouldThrowException_whenUserIdIsInvalid() {
+        // given
+
+        // when / then
+        assertThatThrownBy(() -> wardrobeService.getWardrobePreview("not-a-uuid"))
+                .isInstanceOf(IllegalArgumentException.class);
+    }
+
+    @Test
+    void getWardrobePreview_shouldReturnEmptyOccasions_whenNoneFound() {
+        // given
+        String userId = UUID.randomUUID().toString();
+        UUID uuid = UUID.fromString(userId);
+        when(userService.userExists(uuid)).thenReturn(true);
+
+        PieceOfClothingPreviewProjection projection = mock(PieceOfClothingPreviewProjection.class);
+        when(projection.getPieceOfClothingId()).thenReturn(1L);
+        when(projection.getImageUrl()).thenReturn("img");
+        when(projection.getIsFavorite()).thenReturn(false);
+        when(projection.getWearCount()).thenReturn(0);
+
+        when(pieceOfClothingRepository.findPieceOfClothingPreviewListByUserId(uuid))
+                .thenReturn(List.of(projection));
+        when(occasionRepository.findAllDTOsByPieceOfClothing(1L)).thenReturn(List.of());
+        when(tagRepository.findNamesByPieceOfClothingIds(1L)).thenReturn(List.of("Tag1"));
+
+        // when
+        ResponseEntity<List<PieceOfClothingPreviewDTO>> response = wardrobeService.getWardrobePreview(userId);
+
+        // then
+        assertThat(response.getBody()).singleElement().satisfies(dto -> {
+            assertThat(dto.getOccasions()).isEmpty();
+            assertThat(dto.getTags()).containsExactly("Tag1");
+        });
+    }
+
+
 }
