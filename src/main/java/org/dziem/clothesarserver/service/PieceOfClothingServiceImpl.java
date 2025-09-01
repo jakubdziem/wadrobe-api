@@ -122,11 +122,13 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
         List<String> occasionNames = updatePieceOfClothingDTO.getOccasions();
         if(!occasionNames.isEmpty()) {
             for (String name : occasionNames) {
-                occasions.add(Occasion.builder().name(name).date(LocalDate.now()).build());
+                occasions.add(Occasion.builder()
+                        .name(name)
+                        .date(LocalDate.now())
+                        .pieces(List.of(pieceOfClothing))
+                        .build());
             }
         }
-
-        //ocassions are not saving properly :(
 
         List<Occasion> savedNewOccasions = occasionRepository.saveAll(occasions);
 
