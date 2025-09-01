@@ -72,6 +72,12 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
         Optional<PieceOfClothing> pieceOfClothingOptional = pieceOfClothingRepository.findById(pieceOfClothingId);
         if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
         PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
+
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!pieceOfClothing.getUser().getUserId().equals(currentUser.getUserId())) {
+            return ResponseEntity.status(403).build();
+        }
+
         return ResponseEntity.ok(PieceOfClothingDetailsDTO.builder()
                 .name(pieceOfClothing.getName())
                 .imageUrl(pieceOfClothing.getImageUrl())

@@ -10,9 +10,11 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
@@ -36,7 +38,6 @@ class PieceOfClothingServiceImplTest {
     @Mock private OccasionRepository occasionRepository;
 
     private PieceOfClothingServiceImpl service;
-
     private UUID userId;
 
     @BeforeEach
@@ -58,29 +59,32 @@ class PieceOfClothingServiceImplTest {
 
     private void setAuthenticatedUser(UUID userId) {
         User user = User.builder().userId(userId).build();
-        UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken(user, null, List.of());
-        SecurityContextHolder.getContext().setAuthentication(auth);
+        Authentication authentication = mock(Authentication.class);
+        Mockito.lenient().when(authentication.getPrincipal()).thenReturn(user);
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        Mockito.lenient().when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
     }
 
     @Test
     void addPieceOfClothingDTO_shouldReturnNotFound_whenUserDoesNotExist() {
-        // given
+        // Given
         AddPieceOfClothingDTO dto = new AddPieceOfClothingDTO();
         dto.setName("Shirt");
         when(userService.userExists(userId)).thenReturn(false);
 
-        // when
+        // When
         ResponseEntity<Void> response = service.addPieceOfClothingDTO(dto);
 
-        // then
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(404);
         verifyNoInteractions(pieceOfClothingRepository, userRepository);
     }
 
     @Test
     void addPieceOfClothingDTO_shouldSavePiece_whenUserExists() {
-        // given
+        // Given
         AddPieceOfClothingDTO dto = new AddPieceOfClothingDTO();
         dto.setName("Shirt");
         dto.setCategory("Casual");
@@ -102,10 +106,10 @@ class PieceOfClothingServiceImplTest {
         when(tagRepository.findNamesByPieceOfClothingIds(dto.getTags())).thenReturn(List.of());
         when(tagRepository.saveAll(any())).thenAnswer(i -> i.getArgument(0));
 
-        // when
+        // When
         ResponseEntity<Void> response = service.addPieceOfClothingDTO(dto);
 
-        // then
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         ArgumentCaptor<PieceOfClothing> captor = ArgumentCaptor.forClass(PieceOfClothing.class);
         verify(pieceOfClothingRepository).save(captor.capture());
@@ -113,20 +117,25 @@ class PieceOfClothingServiceImplTest {
         PieceOfClothing saved = captor.getValue();
         assertThat(saved.getName()).isEqualTo("Shirt");
         assertThat(saved.getCategory().getName()).isEqualTo("Casual");
-        assertThat(saved.getTags()).extracting("name").containsExactlyInAnyOrder("Summer", "Work");
+        assertThat(saved.getTags()).extracting(Tag::getName).containsExactlyInAnyOrder("Summer", "Work");
     }
 
     @Test
     void getPieceOfClothingDetailsDTO_shouldReturnNotFound_whenPieceNotExists() {
+        // Given
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.empty());
 
+        // When
         ResponseEntity<PieceOfClothingDetailsDTO> response = service.getPieceOfClothingDetailsDTO(1L);
 
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(404);
     }
 
     @Test
     void getPieceOfClothingDetailsDTO_shouldReturnDetails_whenPieceExists() {
+        // Given
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         PieceOfClothing piece = PieceOfClothing.builder()
                 .id(1L)
                 .name("Jacket")
@@ -138,11 +147,14 @@ class PieceOfClothingServiceImplTest {
                 .occasions(List.of(Occasion.builder().name("Party").build()))
                 .brand("Nike")
                 .price(BigDecimal.valueOf(250))
+                .user(currentUser)
                 .build();
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.of(piece));
 
+        // When
         ResponseEntity<PieceOfClothingDetailsDTO> response = service.getPieceOfClothingDetailsDTO(1L);
 
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         PieceOfClothingDetailsDTO dto = response.getBody();
         assertThat(dto.getName()).isEqualTo("Jacket");
@@ -152,14 +164,17 @@ class PieceOfClothingServiceImplTest {
 
     @Test
     void toggleIsFavorite_shouldUpdateAndSave_whenPieceExistsAndOwnedByUser() {
+        // Given
         PieceOfClothing piece = PieceOfClothing.builder()
                 .id(1L).isFavorite(false)
                 .user(User.builder().userId(userId).build())
                 .build();
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.of(piece));
 
+        // When
         ResponseEntity<Void> response = service.toggleIsFavorite(1L, true);
 
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(piece.getIsFavorite()).isTrue();
         verify(pieceOfClothingRepository).save(piece);
@@ -167,14 +182,17 @@ class PieceOfClothingServiceImplTest {
 
     @Test
     void incrementWearCount_shouldIncreaseWearCount_whenPieceExistsAndOwnedByUser() {
+        // Given
         PieceOfClothing piece = PieceOfClothing.builder()
                 .id(1L).wearCount(0)
                 .user(User.builder().userId(userId).build())
                 .build();
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.of(piece));
 
+        // When
         ResponseEntity<Integer> response = service.incrementWearCount(1L);
 
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(1);
         assertThat(piece.getWearCount()).isEqualTo(1);
@@ -185,16 +203,20 @@ class PieceOfClothingServiceImplTest {
 
     @Test
     void updatePieceOfClothing_shouldReturnNotFound_whenPieceNotExists() {
+        // Given
         UpdatePieceOfClothingDTO dto = new UpdatePieceOfClothingDTO();
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.empty());
 
+        // When
         ResponseEntity<Void> response = service.updatePieceOfClothing(dto, 1L);
 
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(404);
     }
 
     @Test
     void updatePieceOfClothing_shouldUpdateRelationsAndOccasions_whenPieceExistsAndOwnedByUser() {
+        // Given
         Long pieceId = 1L;
         PieceOfClothing existingPiece = PieceOfClothing.builder()
                 .id(pieceId)
@@ -233,8 +255,10 @@ class PieceOfClothingServiceImplTest {
         when(occasionRepository.findAllByPieceOfClothingId(pieceId)).thenReturn(new ArrayList<>(List.of(existingOccasion)));
         when(occasionRepository.saveAll(any())).thenAnswer(i -> i.getArgument(0));
 
+        // When
         ResponseEntity<Void> response = service.updatePieceOfClothing(dto, pieceId);
 
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         verify(categoryRepository).save(any(Category.class));
         verify(sizeRepository).save(any(Size.class));
@@ -253,5 +277,68 @@ class PieceOfClothingServiceImplTest {
         assertThat(existingPiece.getPrice()).isEqualTo(BigDecimal.valueOf(200));
         assertThat(existingPiece.getNote()).isEqualTo("Updated note");
         assertThat(existingPiece.getImageUrl()).isEqualTo("new.jpg");
+    }
+
+    @Test
+    void toggleIsFavorite_shouldReturnForbidden_whenPieceExistsButOwnedByAnotherUser() {
+        // Given
+        UUID otherUserId = UUID.randomUUID();
+        PieceOfClothing piece = PieceOfClothing.builder()
+                .id(1L).isFavorite(false)
+                .user(User.builder().userId(otherUserId).build())
+                .build();
+        when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.of(piece));
+
+        // When
+        ResponseEntity<Void> response = service.toggleIsFavorite(1L, true);
+
+        // Then
+        assertThat(response.getStatusCodeValue()).isEqualTo(403);
+        assertThat(piece.getIsFavorite()).isFalse();
+        verify(pieceOfClothingRepository, never()).save(any());
+    }
+
+    @Test
+    void incrementWearCount_shouldReturnForbidden_whenPieceOwnedByAnotherUser() {
+        // Given
+        UUID otherUserId = UUID.randomUUID();
+        PieceOfClothing piece = PieceOfClothing.builder()
+                .id(1L).wearCount(0)
+                .user(User.builder().userId(otherUserId).build())
+                .build();
+        when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.of(piece));
+
+        // When
+        ResponseEntity<Integer> response = service.incrementWearCount(1L);
+
+        // Then
+        assertThat(response.getStatusCodeValue()).isEqualTo(403);
+        assertThat(piece.getWearCount()).isEqualTo(0);
+        verify(pieceOfClothingRepository, never()).save(any());
+        verify(wornDateRepository, never()).save(any());
+    }
+
+    @Test
+    void updatePieceOfClothing_shouldReturnForbidden_whenPieceOwnedByAnotherUser() {
+        // Given
+        UUID otherUserId = UUID.randomUUID();
+        Long pieceId = 1L;
+        PieceOfClothing piece = PieceOfClothing.builder()
+                .id(pieceId)
+                .name("Shirt")
+                .user(User.builder().userId(otherUserId).build())
+                .build();
+        when(pieceOfClothingRepository.findById(pieceId)).thenReturn(Optional.of(piece));
+
+        UpdatePieceOfClothingDTO dto = new UpdatePieceOfClothingDTO();
+        dto.setName("New Name");
+
+        // When
+        ResponseEntity<Void> response = service.updatePieceOfClothing(dto, pieceId);
+
+        // Then
+        assertThat(response.getStatusCodeValue()).isEqualTo(403);
+        assertThat(piece.getName()).isEqualTo("Shirt");
+        verify(pieceOfClothingRepository, never()).save(any());
     }
 }

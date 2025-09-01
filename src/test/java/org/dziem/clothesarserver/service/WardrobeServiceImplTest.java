@@ -26,14 +26,10 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class WardrobeServiceImplTest {
 
-    @Mock
-    private PieceOfClothingRepository pieceOfClothingRepository;
-    @Mock
-    private OccasionRepository occasionRepository;
-    @Mock
-    private UserService userService;
-    @Mock
-    private TagRepository tagRepository;
+    @Mock private PieceOfClothingRepository pieceOfClothingRepository;
+    @Mock private OccasionRepository occasionRepository;
+    @Mock private UserService userService;
+    @Mock private TagRepository tagRepository;
 
     private WardrobeServiceImpl wardrobeService;
 
@@ -45,7 +41,6 @@ class WardrobeServiceImplTest {
                 userService,
                 tagRepository
         );
-        // clear context between tests
         SecurityContextHolder.clearContext();
     }
 
@@ -59,32 +54,32 @@ class WardrobeServiceImplTest {
 
     @Test
     void getWardrobePreview_shouldReturnNotFound_whenUserDoesNotExist() {
-        // given
+        // Given
         UUID userId = UUID.randomUUID();
         setAuthenticatedUser(userId);
         when(userService.userExists(userId)).thenReturn(false);
 
-        // when
+        // When
         ResponseEntity<List<PieceOfClothingPreviewDTO>> response = wardrobeService.getWardrobePreview();
 
-        // then
+        // Then
         assertThat(response.getStatusCodeValue()).isEqualTo(404);
         verifyNoInteractions(pieceOfClothingRepository, occasionRepository, tagRepository);
     }
 
     @Test
     void getWardrobePreview_shouldReturnEmptyList_whenUserExistsButNoClothes() {
-        // given
+        // Given
         UUID userId = UUID.randomUUID();
         setAuthenticatedUser(userId);
         when(userService.userExists(userId)).thenReturn(true);
         when(pieceOfClothingRepository.findPieceOfClothingPreviewListByUserId(userId))
                 .thenReturn(List.of());
 
-        // when
+        // When
         ResponseEntity<List<PieceOfClothingPreviewDTO>> response = wardrobeService.getWardrobePreview();
 
-        // then
+        // Then
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
         assertThat(response.getBody()).isEmpty();
         verify(pieceOfClothingRepository).findPieceOfClothingPreviewListByUserId(userId);
@@ -92,7 +87,7 @@ class WardrobeServiceImplTest {
 
     @Test
     void getWardrobePreview_shouldReturnSortedPreviewList_whenUserExistsAndHasClothes() {
-        // given
+        // Given
         UUID userId = UUID.randomUUID();
         setAuthenticatedUser(userId);
         when(userService.userExists(userId)).thenReturn(true);
@@ -122,10 +117,10 @@ class WardrobeServiceImplTest {
         when(occasionRepository.findAllDTOsByPieceOfClothing(1L)).thenReturn(List.of(occasion1));
         when(tagRepository.findNamesByPieceOfClothingIds(1L)).thenReturn(List.of("Tag1"));
 
-        // when
+        // When
         ResponseEntity<List<PieceOfClothingPreviewDTO>> response = wardrobeService.getWardrobePreview();
 
-        // then
+        // Then
         assertThat(response.getStatusCode().is2xxSuccessful()).isTrue();
         List<PieceOfClothingPreviewDTO> result = response.getBody();
         assertThat(result).hasSize(2);
@@ -150,7 +145,7 @@ class WardrobeServiceImplTest {
 
     @Test
     void getWardrobePreview_shouldReturnEmptyOccasions_whenNoneFound() {
-        // given
+        // Given
         UUID userId = UUID.randomUUID();
         setAuthenticatedUser(userId);
         when(userService.userExists(userId)).thenReturn(true);
@@ -166,10 +161,10 @@ class WardrobeServiceImplTest {
         when(occasionRepository.findAllDTOsByPieceOfClothing(1L)).thenReturn(List.of());
         when(tagRepository.findNamesByPieceOfClothingIds(1L)).thenReturn(List.of("Tag1"));
 
-        // when
+        // When
         ResponseEntity<List<PieceOfClothingPreviewDTO>> response = wardrobeService.getWardrobePreview();
 
-        // then
+        // Then
         assertThat(response.getBody()).singleElement().satisfies(dto -> {
             assertThat(dto.getOccasions()).isEmpty();
             assertThat(dto.getTags()).containsExactly("Tag1");
