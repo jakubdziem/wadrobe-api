@@ -6,6 +6,7 @@ import org.dziem.clothesarserver.dto.UpdatePieceOfClothingDTO;
 import org.dziem.clothesarserver.model.*;
 import org.dziem.clothesarserver.repository.*;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDate;
@@ -37,13 +38,16 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
     }
 
     @Override
-    public ResponseEntity<Void> addPieceOfClothingDTO(AddPieceOfClothingDTO addPieceOfClothingDTO, String userId) {
+    public ResponseEntity<Void> addPieceOfClothingDTO(AddPieceOfClothingDTO addPieceOfClothingDTO) {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID userId = currentUser.getUserId();
+
         if(!userService.userExists(userId)) return ResponseEntity.notFound().build();
 
         PieceOfClothingRelations pieceOfClothingRelations = updatePieceOfClothingRelations(addPieceOfClothingDTO);
 
         pieceOfClothingRepository.save(PieceOfClothing.builder()
-                .user(userRepository.getReferenceById(UUID.fromString(userId)))
+                .user(userRepository.getReferenceById(userId))
                 .wearCount(0)
                 .isFavorite(false)
                 .lastWornDate(null)
@@ -88,6 +92,12 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
         Optional<PieceOfClothing> pieceOfClothingOptional = pieceOfClothingRepository.findById(pieceOfClothingId);
         if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
         PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
+
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!pieceOfClothing.getUser().getUserId().equals(currentUser.getUserId())) {
+            return ResponseEntity.status(403).build();
+        }
+
         pieceOfClothing.setIsFavorite(isFavorite);
         pieceOfClothingRepository.save(pieceOfClothing);
         return ResponseEntity.ok().build();
@@ -97,8 +107,13 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
     public ResponseEntity<Integer> incrementWearCount(Long pieceOfClothingId) {
         Optional<PieceOfClothing> pieceOfClothingOptional = pieceOfClothingRepository.findById(pieceOfClothingId);
         if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
-
         PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
+
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!pieceOfClothing.getUser().getUserId().equals(currentUser.getUserId())) {
+            return ResponseEntity.status(403).build();
+        }
+
         WornDate wornDate = WornDate.builder().date(LocalDate.now()).pieceOfClothing(pieceOfClothing).build();
         wornDateRepository.save(wornDate);
         int incrementedWearCount = pieceOfClothing.incrementWearCount();
@@ -113,6 +128,11 @@ public class PieceOfClothingServiceImpl implements PieceOfClothingService {
         if(pieceOfClothingOptional.isEmpty()) return ResponseEntity.notFound().build();
 
         PieceOfClothing pieceOfClothing = pieceOfClothingOptional.get();
+
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        if (!pieceOfClothing.getUser().getUserId().equals(currentUser.getUserId())) {
+            return ResponseEntity.status(403).build();
+        }
 
         PieceOfClothingRelations pieceOfClothingRelations = updatePieceOfClothingRelations(new AddPieceOfClothingDTO(updatePieceOfClothingDTO));
 

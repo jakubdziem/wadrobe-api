@@ -12,6 +12,8 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.context.SecurityContextHolder;
 
 import java.math.BigDecimal;
 import java.time.LocalDate;
@@ -35,6 +37,8 @@ class PieceOfClothingServiceImplTest {
 
     private PieceOfClothingServiceImpl service;
 
+    private UUID userId;
+
     @BeforeEach
     void setUp() {
         service = new PieceOfClothingServiceImpl(
@@ -48,18 +52,26 @@ class PieceOfClothingServiceImplTest {
                 wornDateRepository,
                 occasionRepository
         );
+        userId = UUID.randomUUID();
+        setAuthenticatedUser(userId);
+    }
+
+    private void setAuthenticatedUser(UUID userId) {
+        User user = User.builder().userId(userId).build();
+        UsernamePasswordAuthenticationToken auth =
+                new UsernamePasswordAuthenticationToken(user, null, List.of());
+        SecurityContextHolder.getContext().setAuthentication(auth);
     }
 
     @Test
     void addPieceOfClothingDTO_shouldReturnNotFound_whenUserDoesNotExist() {
         // given
-        String userId = UUID.randomUUID().toString();
         AddPieceOfClothingDTO dto = new AddPieceOfClothingDTO();
         dto.setName("Shirt");
         when(userService.userExists(userId)).thenReturn(false);
 
         // when
-        ResponseEntity<Void> response = service.addPieceOfClothingDTO(dto, userId);
+        ResponseEntity<Void> response = service.addPieceOfClothingDTO(dto);
 
         // then
         assertThat(response.getStatusCodeValue()).isEqualTo(404);
@@ -69,9 +81,6 @@ class PieceOfClothingServiceImplTest {
     @Test
     void addPieceOfClothingDTO_shouldSavePiece_whenUserExists() {
         // given
-        String userId = UUID.randomUUID().toString();
-        UUID uuid = UUID.fromString(userId);
-
         AddPieceOfClothingDTO dto = new AddPieceOfClothingDTO();
         dto.setName("Shirt");
         dto.setCategory("Casual");
@@ -83,7 +92,7 @@ class PieceOfClothingServiceImplTest {
         dto.setImageUrl("img.jpg");
 
         when(userService.userExists(userId)).thenReturn(true);
-        when(userRepository.getReferenceById(uuid)).thenReturn(User.builder().userId(uuid).build());
+        when(userRepository.getReferenceById(userId)).thenReturn(User.builder().userId(userId).build());
         when(categoryRepository.findAllByName("Casual")).thenReturn(List.of());
         when(sizeRepository.findAllByName("M")).thenReturn(List.of());
         when(conditionRepository.findAllByName("New")).thenReturn(List.of());
@@ -94,7 +103,7 @@ class PieceOfClothingServiceImplTest {
         when(tagRepository.saveAll(any())).thenAnswer(i -> i.getArgument(0));
 
         // when
-        ResponseEntity<Void> response = service.addPieceOfClothingDTO(dto, userId);
+        ResponseEntity<Void> response = service.addPieceOfClothingDTO(dto);
 
         // then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
@@ -109,19 +118,15 @@ class PieceOfClothingServiceImplTest {
 
     @Test
     void getPieceOfClothingDetailsDTO_shouldReturnNotFound_whenPieceNotExists() {
-        // given
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // when
         ResponseEntity<PieceOfClothingDetailsDTO> response = service.getPieceOfClothingDetailsDTO(1L);
 
-        // then
         assertThat(response.getStatusCodeValue()).isEqualTo(404);
     }
 
     @Test
     void getPieceOfClothingDetailsDTO_shouldReturnDetails_whenPieceExists() {
-        // given
         PieceOfClothing piece = PieceOfClothing.builder()
                 .id(1L)
                 .name("Jacket")
@@ -136,10 +141,8 @@ class PieceOfClothingServiceImplTest {
                 .build();
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.of(piece));
 
-        // when
         ResponseEntity<PieceOfClothingDetailsDTO> response = service.getPieceOfClothingDetailsDTO(1L);
 
-        // then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         PieceOfClothingDetailsDTO dto = response.getBody();
         assertThat(dto.getName()).isEqualTo("Jacket");
@@ -148,30 +151,30 @@ class PieceOfClothingServiceImplTest {
     }
 
     @Test
-    void toggleIsFavorite_shouldUpdateAndSave_whenPieceExists() {
-        // given
-        PieceOfClothing piece = PieceOfClothing.builder().id(1L).isFavorite(false).build();
+    void toggleIsFavorite_shouldUpdateAndSave_whenPieceExistsAndOwnedByUser() {
+        PieceOfClothing piece = PieceOfClothing.builder()
+                .id(1L).isFavorite(false)
+                .user(User.builder().userId(userId).build())
+                .build();
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.of(piece));
 
-        // when
         ResponseEntity<Void> response = service.toggleIsFavorite(1L, true);
 
-        // then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(piece.getIsFavorite()).isTrue();
         verify(pieceOfClothingRepository).save(piece);
     }
 
     @Test
-    void incrementWearCount_shouldIncreaseWearCount_whenPieceExists() {
-        // given
-        PieceOfClothing piece = PieceOfClothing.builder().id(1L).wearCount(0).build();
+    void incrementWearCount_shouldIncreaseWearCount_whenPieceExistsAndOwnedByUser() {
+        PieceOfClothing piece = PieceOfClothing.builder()
+                .id(1L).wearCount(0)
+                .user(User.builder().userId(userId).build())
+                .build();
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.of(piece));
 
-        // when
         ResponseEntity<Integer> response = service.incrementWearCount(1L);
 
-        // then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         assertThat(response.getBody()).isEqualTo(1);
         assertThat(piece.getWearCount()).isEqualTo(1);
@@ -182,24 +185,21 @@ class PieceOfClothingServiceImplTest {
 
     @Test
     void updatePieceOfClothing_shouldReturnNotFound_whenPieceNotExists() {
-        // given
         UpdatePieceOfClothingDTO dto = new UpdatePieceOfClothingDTO();
         when(pieceOfClothingRepository.findById(1L)).thenReturn(Optional.empty());
 
-        // when
         ResponseEntity<Void> response = service.updatePieceOfClothing(dto, 1L);
 
-        // then
         assertThat(response.getStatusCodeValue()).isEqualTo(404);
     }
 
     @Test
-    void updatePieceOfClothing_shouldUpdateRelationsAndOccasions_whenPieceExists() {
-        // given
+    void updatePieceOfClothing_shouldUpdateRelationsAndOccasions_whenPieceExistsAndOwnedByUser() {
         Long pieceId = 1L;
         PieceOfClothing existingPiece = PieceOfClothing.builder()
                 .id(pieceId)
                 .name("Old Shirt")
+                .user(User.builder().userId(userId).build())
                 .category(Category.builder().name("OldCat").build())
                 .size(Size.builder().name("OldSize").build())
                 .condition(Condition.builder().name("OldCond").build())
@@ -226,7 +226,6 @@ class PieceOfClothingServiceImplTest {
         when(categoryRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(sizeRepository.save(any())).thenAnswer(i -> i.getArgument(0));
         when(conditionRepository.save(any())).thenAnswer(i -> i.getArgument(0));
-
         when(tagRepository.findNamesByPieceOfClothingIds(List.of("Tag1","Tag2"))).thenReturn(List.of());
         when(tagRepository.saveAll(any())).thenAnswer(i -> i.getArgument(0));
 
@@ -234,10 +233,8 @@ class PieceOfClothingServiceImplTest {
         when(occasionRepository.findAllByPieceOfClothingId(pieceId)).thenReturn(new ArrayList<>(List.of(existingOccasion)));
         when(occasionRepository.saveAll(any())).thenAnswer(i -> i.getArgument(0));
 
-        // when
         ResponseEntity<Void> response = service.updatePieceOfClothing(dto, pieceId);
 
-        // then
         assertThat(response.getStatusCodeValue()).isEqualTo(200);
         verify(categoryRepository).save(any(Category.class));
         verify(sizeRepository).save(any(Size.class));
@@ -257,5 +254,4 @@ class PieceOfClothingServiceImplTest {
         assertThat(existingPiece.getNote()).isEqualTo("Updated note");
         assertThat(existingPiece.getImageUrl()).isEqualTo("new.jpg");
     }
-
 }

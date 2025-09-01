@@ -7,6 +7,6 @@ import java.util.List;
 
 public interface WardrobeService {
 
-    ResponseEntity<List<PieceOfClothingPreviewDTO>> getWardrobePreview(String userId);
+    ResponseEntity<List<PieceOfClothingPreviewDTO>> getWardrobePreview();
 
 }

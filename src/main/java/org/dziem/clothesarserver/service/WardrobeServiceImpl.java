@@ -1,10 +1,12 @@
 package org.dziem.clothesarserver.service;
 
 import org.dziem.clothesarserver.dto.PieceOfClothingPreviewDTO;
+import org.dziem.clothesarserver.model.User;
 import org.dziem.clothesarserver.repository.OccasionRepository;
 import org.dziem.clothesarserver.repository.PieceOfClothingRepository;
 import org.dziem.clothesarserver.repository.TagRepository;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -26,8 +28,10 @@ public class WardrobeServiceImpl implements WardrobeService {
     }
 
     @Override
-    public ResponseEntity<List<PieceOfClothingPreviewDTO>> getWardrobePreview(String userId) {
-        UUID userUUID = UUID.fromString(userId);
+    public ResponseEntity<List<PieceOfClothingPreviewDTO>> getWardrobePreview() {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UUID userUUID = currentUser.getUserId();
+
         if(!userService.userExists(userUUID)) return ResponseEntity.notFound().build();
         List<PieceOfClothingPreviewDTO> pieceOfClothingPreviewDTOs =
                 pieceOfClothingRepository.findPieceOfClothingPreviewListByUserId(

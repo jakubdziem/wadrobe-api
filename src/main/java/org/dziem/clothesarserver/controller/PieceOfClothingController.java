@@ -17,9 +17,9 @@ public class PieceOfClothingController {
         this.pieceOfClothingService = pieceOfClothingService;
     }
 
-    @PostMapping("/piece-of-clothing/{userId}")
-    public ResponseEntity<Void> addPieceOfClothing(@RequestBody AddPieceOfClothingDTO addPieceOfClothingDTO, @PathVariable String userId) {
-        return pieceOfClothingService.addPieceOfClothingDTO(addPieceOfClothingDTO, userId);
+    @PostMapping("/piece-of-clothing")
+    public ResponseEntity<Void> addPieceOfClothing(@RequestBody AddPieceOfClothingDTO addPieceOfClothingDTO) {
+        return pieceOfClothingService.addPieceOfClothingDTO(addPieceOfClothingDTO);
     }
 
     @GetMapping("/piece-of-clothing/{pieceOfClothingId}")
