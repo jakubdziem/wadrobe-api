@@ -1,5 +1,6 @@
 package org.dziem.clothesarserver.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.dziem.clothesarserver.dto.AuthResponse;
 import org.dziem.clothesarserver.dto.LoginRequest;
@@ -28,11 +29,13 @@ public class AuthController {
         return ResponseEntity.ok(authService.login(request));
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @GetMapping("/me")
     public ResponseEntity<String> me() {
         return ResponseEntity.ok(authService.me());
     }
 
+    @SecurityRequirement(name = "bearerAuth")
     @PostMapping("/logout/{userId}")
     public ResponseEntity<Void> logout(@PathVariable String userId) {
         authService.logout(userId);

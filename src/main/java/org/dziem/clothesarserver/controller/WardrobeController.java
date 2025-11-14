@@ -1,5 +1,6 @@
 package org.dziem.clothesarserver.controller;
 
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.dziem.clothesarserver.dto.PieceOfClothingPreviewDTO;
 import org.dziem.clothesarserver.service.WardrobeService;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import java.util.List;
 
+@SecurityRequirement(name = "bearerAuth")
 @RestController
 @RequestMapping("/api")
 public class WardrobeController {
