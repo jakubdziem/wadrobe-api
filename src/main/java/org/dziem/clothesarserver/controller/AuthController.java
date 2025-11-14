@@ -1,5 +1,7 @@
 package org.dziem.clothesarserver.controller;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import jakarta.validation.Valid;
 import org.dziem.clothesarserver.dto.AuthResponse;
@@ -20,12 +22,38 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public ResponseEntity<Void> register(@Valid @RequestBody RegisterRequest request) {
+    public ResponseEntity<Void> register(@io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            examples = {
+                    @ExampleObject(
+                            name = "Example",
+                            value = """
+                                    {
+                                        "email": "johnkowalski@mail.com",
+                                        "password": "paswrd1!"
+                                    }
+                                    """
+                    )
+            }
+        )
+    ) @Valid @RequestBody RegisterRequest request) {
         return authService.register(request) ? ResponseEntity.ok().build() : ResponseEntity.badRequest().build();
     }
 
     @PostMapping("/login")
-    public ResponseEntity<AuthResponse> login(@Valid @RequestBody LoginRequest request) {
+    public ResponseEntity<AuthResponse> login(@io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            examples = {
+                    @ExampleObject(
+                            name = "Example",
+                            value = """
+                                    {
+                                        "email": "johnkowalski@mail.com",
+                                        "password": "paswrd1!"
+                                    }
+                                    """
+                    )
+            }
+        )
+    ) @Valid @RequestBody LoginRequest request) {
         return ResponseEntity.ok(authService.login(request));
     }
 

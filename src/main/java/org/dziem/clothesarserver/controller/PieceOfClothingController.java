@@ -1,5 +1,7 @@
 package org.dziem.clothesarserver.controller;
 
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.dziem.clothesarserver.dto.AddPieceOfClothingDTO;
 import org.dziem.clothesarserver.dto.PieceOfClothingDetailsDTO;
@@ -20,7 +22,28 @@ public class PieceOfClothingController {
     }
 
     @PostMapping("/piece-of-clothing")
-    public ResponseEntity<Void> addPieceOfClothing(@RequestBody AddPieceOfClothingDTO addPieceOfClothingDTO) {
+    public ResponseEntity<Void> addPieceOfClothing(@io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            examples = {
+                    @ExampleObject(
+                            name = "Example",
+                            value = """
+                                    {
+                                        "name": "Blue shirt",
+                                        "category": "Polo",
+                                        "purchaseDate": "2024-07-07",
+                                        "size": "XLLL",
+                                        "condition": "New condition",
+                                        "note": "Comfy",
+                                        "price": "199.9",
+                                        "tags": ["fire", "casual"],
+                                        "brand": "Nike",
+                                        "arUrl": "url"
+                                    }
+                                    """
+                    )
+            }
+    )
+    )@RequestBody AddPieceOfClothingDTO addPieceOfClothingDTO) {
         return pieceOfClothingService.addPieceOfClothingDTO(addPieceOfClothingDTO);
     }
 
@@ -40,7 +63,30 @@ public class PieceOfClothingController {
     }
 
     @PutMapping("/piece-of-clothing/{pieceOfClothingId}")
-    public ResponseEntity<Void> updatePieceOfClothing(@RequestBody UpdatePieceOfClothingDTO updatePieceOfClothingDTO, @PathVariable Long pieceOfClothingId) {
+    public ResponseEntity<Void> updatePieceOfClothing(@io.swagger.v3.oas.annotations.parameters.RequestBody(content = @Content(
+            examples = {
+                    @ExampleObject(
+                            name = "Example",
+                            value = """
+                                    {
+                                        "name": "Blue shirt",
+                                        "category": "Polo",
+                                        "imageUrl": "newURL",
+                                        "purchaseDate": "2024-07-07",
+                                        "size": "XLLL",
+                                        "condition": "New condition",
+                                        "note": "Comfy",
+                                        "price": "199.9",
+                                        "tags": ["fire", "casual"],
+                                        "occasions": ["Sister's birthday"],
+                                        "brand": "Nike",
+                                        "arUrl": "url"
+                                    }
+                                    """
+                    )
+            }
+    )
+    )@RequestBody UpdatePieceOfClothingDTO updatePieceOfClothingDTO, @PathVariable Long pieceOfClothingId) {
         return pieceOfClothingService.updatePieceOfClothing(updatePieceOfClothingDTO, pieceOfClothingId);
     }
 
