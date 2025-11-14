@@ -6,6 +6,7 @@ import org.dziem.clothesarserver.dto.RegisterRequest;
 import org.dziem.clothesarserver.model.User;
 import org.dziem.clothesarserver.repository.UserRepository;
 import org.dziem.clothesarserver.security.JwtProvider;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.data.redis.core.StringRedisTemplate;
@@ -62,6 +63,12 @@ public class AuthServiceImpl implements AuthService {
             return true;
         }
         throw USER_NOT_FOUND;
+    }
+
+    @Override
+    public String me() {
+        User currentUser = (User) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        return currentUser.getUserId().toString();
     }
 }
 

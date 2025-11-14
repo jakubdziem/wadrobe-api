@@ -29,8 +29,8 @@ public class AuthController {
     }
 
     @GetMapping("/me")
-    public ResponseEntity<Void> me() {
-        return ResponseEntity.ok().build();
+    public ResponseEntity<String> me() {
+        return ResponseEntity.ok(authService.me());
     }
 
     @PostMapping("/logout/{userId}")

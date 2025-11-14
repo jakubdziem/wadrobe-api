@@ -12,4 +12,6 @@ public interface AuthService {
 
     boolean logout(String userId);
 
+    String me();
+
 }
